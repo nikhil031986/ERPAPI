@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "BNKXV5s0H0N6AKCH/LNgkvVBFH2nMxU5ZbNjsZh5/v0=",
+  "Source": "ERPAPI_APP",
+  "BasePath": "_content/ERPAPI_APP",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

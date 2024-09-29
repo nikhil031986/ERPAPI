@@ -1,0 +1,14 @@
+ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+ {
+     if (!optionsBuilder.IsConfigured)
+     {
+         // add IConfigurationRoot  to get connection string 
+         IConfigurationRoot configuration = new ConfigurationBuilder()
+         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+         .AddJsonFile("appsettings.json")
+         .Build();
+         optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+     }
+ }
+ 
+ Scaffold-DbContext 'Name=DefaultConnection' Microsoft.EntityFrameworkCore.SqlServer -f -OutputDir Models
