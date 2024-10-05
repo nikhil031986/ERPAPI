@@ -100,7 +100,7 @@ namespace ERPAPI_APP.Controllers
                 {
                     return new JsonResult(new { message = "UserName and password not allow null or empty." })
                     {
-                        StatusCode = StatusCodes.Status400BadRequest // Status code here 
+                        StatusCode = StatusCodes.Status200OK// Status code here 
                     };
                 }
 
@@ -110,14 +110,14 @@ namespace ERPAPI_APP.Controllers
                 {
                     return new JsonResult(new { message = "EmailId already exists into the system." })
                     {
-                        StatusCode = StatusCodes.Status400BadRequest // Status code here 
+                        StatusCode = StatusCodes.Status200OK // Status code here 
                     };
                 }
 
                 var newUser = await DBAUser.singUpUser(singUp);
                 if (newUser != null)
                 {
-                    return new JsonResult(JsonConvert.SerializeObject(newUser))
+                    return new JsonResult(new { message = "User register." , data=JsonConvert.SerializeObject(newUser) })
                     {
                         StatusCode = StatusCodes.Status200OK, // Status code here ,
                     };
@@ -157,6 +157,56 @@ namespace ERPAPI_APP.Controllers
                 {
                     StatusCode = StatusCodes.Status400BadRequest // Status code here 
                 };
+            }
+        }
+
+        [HttpGet("CheckEmaiId")]
+        public async Task<JsonResult> CheckEamilId(string emailId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(emailId))
+                {
+                    return new JsonResult(new
+                    {
+                        message = "EmailId is null or emapty."
+                    })
+                    {
+                        StatusCode = StatusCodes.Status200OK, // Status code here ,
+                    };
+                }
+                else
+                {
+                    var emailIdNotExists = await DBAUser.CheckEmailId(emailId);
+                    if (emailIdNotExists)
+                    {
+                        return new JsonResult(new
+                        {
+                            message = "false"
+                        })
+                        {
+                            StatusCode = StatusCodes.Status200OK, // Status code here ,
+                        };
+                    }
+                    else
+                    {
+                        return new JsonResult(new
+                        {
+                            message = "true"
+                        })
+                        {
+                            StatusCode = StatusCodes.Status200OK, // Status code here ,
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = "Not Allow" })
+                {
+                    StatusCode = StatusCodes.Status400BadRequest // Status code here 
+                };
+                throw;
             }
         }
     }

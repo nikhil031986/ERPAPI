@@ -1,4 +1,5 @@
-﻿using ERPAPI_APP.DataBaseAccess;
+﻿using Azure;
+using ERPAPI_APP.DataBaseAccess;
 using ERPAPI_APP.JSONDataMigration;
 using ERPAPI_APP.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -6,7 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Dynamic;
 using System.Formats.Asn1;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace ERPAPI_APP
 {
@@ -44,6 +51,8 @@ namespace ERPAPI_APP
                 var listOfAPI = await UtilObject.erpDbContext.MigrationConfigs.ToListAsync();
                 foreach (MigrationConfig config in listOfAPI)
                 {
+                    if (config.Id < 1017) continue;
+
                     using (HttpClient client = new HttpClient())
                     {
                         DbLog log = new DbLog
@@ -52,9 +61,11 @@ namespace ERPAPI_APP
                             RequestApi = config.Apidetails,
                             RequestDate = DateTime.Now,
                         };
-
+                        HttpMethod httpMethod = new HttpMethod(config.Httpmethod);
                         client.DefaultRequestHeaders.Add(config.TokanType, config.Apitokan);
-                        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, config.Apidetails);
+                        HttpRequestMessage request = new HttpRequestMessage(httpMethod, config.Apidetails);
+                        var content = new StringContent("{}", null, "application/json");
+                        request.Content = content;
                         request.Headers.Add("accept", "application/json");
                         HttpResponseMessage response = await client.SendAsync(request);
                         response.EnsureSuccessStatusCode();
@@ -65,41 +76,26 @@ namespace ERPAPI_APP
 
                         await DALogDetails.InsertLog(log);
 
-                        switch (config.Id)
+                        //dynamic obj = JsonConvert.DeserializeObject(responseBody);
+                        //foreach(var item in obj)
+                        //{
+                        //    Console.WriteLine(item);
+                        //}
+                        var methodName = Convert.ToString(config.MethodName);
+                        if (!string.IsNullOrWhiteSpace(methodName))
                         {
-                            case 1:
-                                await DAItems.InsertItems(responseBody);
-                                break;
-                            case 2:
-                                await DAContact.InsertContact(responseBody);
-                                break;
-                            case 3:
-                                await InsertAddOn(AddOnMainClass.FromJson(responseBody).ToList());
-                                break;
-                            case 4:
-                                await InsertBillingOption(responseBody);
-                                break;
-                            case 5:
-                                await InsertCustomerLocation(responseBody);
-                                break;
-                            case 6:
-                                await InsertWareHouse(responseBody);
-                                break;
-                            case 7:
-                                await InsertContactMaster(responseBody);
-                                break;
-                            case 9:
-                                await InsertPaymentTerms(responseBody);
-                                break;
-                            case 10:
-                                await InsertSystemShipVia(responseBody);
-                                break;
-                            case 11:
-                                await InsertOrderSourFromAPI(responseBody);
-                                break;
-                            default:
-                                break;
+                            var className = "ERPAPI_APP.UtilObject";
+                            Type typ = Type.GetType(className, true);
+                            if (typ != null)
+                            {
+                                MethodInfo method = typ.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
+                                if (method != null)
+                                {
+                                    method.Invoke(null, new object[] { responseBody });
+                                }
+                            }
                         }
+
                     }
                 }
                 return true;
@@ -114,6 +110,598 @@ namespace ERPAPI_APP
                 GC.Collect();
             }
 
+        }
+
+        private static async Task InsertItemImage(JSFile[] jSFiles)
+        {
+            try
+            {
+                foreach (var jSFile in jSFiles)
+                {
+                    var dbImgeFile = await erpDbContext.ItemImages.Where(x => x.ItemImageTranId == jSFile.FileId).SingleOrDefaultAsync();
+                    if (dbImgeFile != null)
+                    {
+                        dbImgeFile.FileName = jSFile.FileName;
+                        dbImgeFile.ItemImageTranId = (int)jSFile.FileId;
+                        dbImgeFile.Sku = jSFile.Sku;
+                        dbImgeFile.ItemMasterId = (int)jSFile.ItemId;
+                        dbImgeFile.ETag = jSFile.ETag;
+                        dbImgeFile.Key = jSFile.Key;
+                        erpDbContext.ItemImages.Update(dbImgeFile);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var newImage = new ItemImage
+                        {
+                            FileName = jSFile.FileName,
+                            ItemImageTranId = (int)jSFile.FileId,
+                            Sku = jSFile.Sku,
+                            ItemMasterId = (int)jSFile.ItemId,
+                            ETag = jSFile.ETag,
+                            Key = jSFile.Key,
+                        };
+                        await erpDbContext.ItemImages.AddAsync(newImage);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertItemFromWeb(string jsItems)
+        {
+            try
+            {
+                dynamic dictionary = JsonConvert.DeserializeObject<ExpandoObject>(jsItems);
+                foreach (var item in dictionary)
+                {
+                    var valueofItem = item.Value;
+                    JSItemImportFromWeb newImportWebitem = new JSItemImportFromWeb();
+                    PropertyInfo[] getproperty = newImportWebitem.GetType().GetProperties();
+                    if (valueofItem != null)
+                    {
+                        foreach (var innerObject in valueofItem)
+                        {
+                            string propName = innerObject.Key.ToString();
+
+                            PropertyInfo propertyInfo = getproperty.Where(x => x.Name.ToUpper() == propName.Replace("_", "").ToUpper()).SingleOrDefault();
+                            if (propertyInfo != null)
+                            {
+                                if (innerObject.Key.ToString().ToUpper() == "FILES")
+                                {
+                                    List<JSFile> appendFile = new List<JSFile>();
+                                    foreach (var file in innerObject.Value)
+                                    {
+                                        JSFile newFile = new JSFile();
+                                        PropertyInfo[] fileobjproperty = newFile.GetType().GetProperties();
+                                        foreach (var Filekey in file)
+                                        {
+                                            string fileobjVlaue = Filekey.Key.ToString();
+                                            PropertyInfo fileobjPro = fileobjproperty.Where(x => x.Name.ToUpper() == fileobjVlaue.Replace("_", "").ToUpper()).SingleOrDefault();
+                                            if (fileobjPro != null)
+                                            {
+                                                fileobjPro.SetValue(newFile, Filekey.Value, null);
+                                            }
+                                        }
+                                        appendFile.Add(newFile);
+                                    }
+                                    propertyInfo.SetValue(newImportWebitem, appendFile.ToArray(), null);
+                                }
+                                else
+                                {
+                                    propertyInfo.SetValue(newImportWebitem, innerObject.Value, null);
+                                }
+                            }
+                        }
+                    }
+
+                    if (newImportWebitem != null)
+                    {
+                        if (newImportWebitem.Files != null)
+                        {
+                            await InsertItemImage(newImportWebitem.Files);
+                        }
+                        var dbitem = await erpDbContext.ItemMasters.Where(x => x.ItemTranId == newImportWebitem.Id).SingleOrDefaultAsync();
+                        var dbUnit = await erpDbContext.UnitMasters.Where(x => x.UnitSymbol == newImportWebitem.UnitSymbol).SingleOrDefaultAsync();
+                        if (dbitem != null)
+                        {
+                            dbitem.ItemName = newImportWebitem.Item;
+                            dbitem.ItemDescription = newImportWebitem.Description;
+                            dbitem.WebDescription = newImportWebitem.WebDescription;
+                            dbitem.Weight = await ConvertToDecimal(Convert.ToString(newImportWebitem.Weight));
+                            dbitem.ShipWidth = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipWidth));
+                            dbitem.ShipHeight = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipHeight));
+                            dbitem.ShipLength = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipLength));
+                            dbitem.CommodityCode = newImportWebitem.CommodityCode;
+                            dbitem.DefaultCountryOfOrigin = newImportWebitem.DefaultCountryOfOrigin;
+                            dbitem.PrimaryVendorId = newImportWebitem.PrimaryVendorId != null ? (int)newImportWebitem.PrimaryVendorId : 0;
+                            dbitem.MainImageFileId = newImportWebitem.MainImageFileId != null ? (int)newImportWebitem.MainImageFileId : 0;
+                            dbitem.UnitId = dbUnit != null ? dbUnit.UnitId : 0;
+                            dbitem.DisplayUnitId = dbUnit != null ? dbUnit.UnitId : 0;
+                            dbitem.ItemTranId = (int)newImportWebitem.Id;
+                            erpDbContext.ItemMasters.Update(dbitem);
+                            await erpDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            var newItem = new ItemMaster
+                            {
+                                ItemTranId = (int)newImportWebitem.Id,
+                                ItemName = newImportWebitem.Item,
+                                ItemDescription = newImportWebitem.Description,
+                                WebDescription = newImportWebitem.WebDescription,
+                                Weight = await ConvertToDecimal(Convert.ToString(newImportWebitem.Weight)),
+                                ShipWidth = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipWidth)),
+                                ShipHeight = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipHeight)),
+                                ShipLength = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipLength)),
+                                CommodityCode = newImportWebitem.CommodityCode,
+                                DefaultCountryOfOrigin = newImportWebitem.DefaultCountryOfOrigin,
+                                PrimaryVendorId = newImportWebitem.PrimaryVendorId != null ? (int)newImportWebitem.PrimaryVendorId : 0,
+                                MainImageFileId = newImportWebitem.MainImageFileId != null ? (int)newImportWebitem.MainImageFileId : 0,
+                                UnitId = dbUnit != null ? dbUnit.UnitId : 0,
+                                DisplayUnitId = dbUnit != null ? dbUnit.UnitId : 0,
+                            };
+                            await erpDbContext.ItemMasters.AddAsync(newItem);
+                            await erpDbContext.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+        private static async Task InsertUntiMaster(string jsUnitMasters)
+        {
+            try
+            {
+                var JSUnitMaster = JsUnti_Master.FromJson(jsUnitMasters);
+                foreach (var item in JSUnitMaster)
+                {
+                    var dbUnit = await erpDbContext.UnitMasters.Where(x => x.UnitTranId == item.Id).SingleOrDefaultAsync();
+                    if (dbUnit != null)
+                    {
+                        dbUnit.UnitSymbol = item.Symbol;
+                        dbUnit.UnitName = item.Label;
+                        dbUnit.GroupLabel = item.GroupLabel;
+                        dbUnit.Visible = item.Visible;
+                        dbUnit.IsCustomUnit = item.IsCustomUnit;
+                        dbUnit.ConversionFactor = await ConvertToDecimal(Convert.ToString(item.ConversionFactor));
+                        dbUnit.UpcCode = item.UpcCode;
+                        dbUnit.Length = await ConvertToDecimal(Convert.ToString(item.Length));
+                        dbUnit.Width = await ConvertToDecimal(Convert.ToString(item.Width));
+                        dbUnit.Height = await ConvertToDecimal(Convert.ToString(item.Height));
+                        dbUnit.CreatedAt = item.CreatedAt.Date;
+                        dbUnit.UpdatedAt = item.UpdatedAt.Date;
+
+                        erpDbContext.UnitMasters.Update(dbUnit);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var newUnit = new UnitMaster
+                        {
+                            UnitSymbol = item.Symbol,
+                            UnitName = item.Label,
+                            GroupLabel = item.GroupLabel,
+                            Visible = item.Visible,
+                            IsCustomUnit = item.IsCustomUnit,
+                            ConversionFactor = await ConvertToDecimal(Convert.ToString(item.ConversionFactor)),
+                            UpcCode = item.UpcCode,
+                            Length = await ConvertToDecimal(Convert.ToString(item.Length)),
+                            Width = await ConvertToDecimal(Convert.ToString(item.Width)),
+                            Height = await ConvertToDecimal(Convert.ToString(item.Height)),
+                            CreatedAt = item.CreatedAt.Date,
+                            UpdatedAt = item.UpdatedAt.Date,
+                        };
+
+                        await erpDbContext.UnitMasters.AddAsync(newUnit);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertSales_Taxes(string jsSales_Taxes)
+        {
+            try
+            {
+                var JsSales_texes = JSSalesTaxes.FromJson(jsSales_Taxes);
+                foreach (var item in JsSales_texes)
+                {
+                    var dbSalesText = await erpDbContext.SalesTaxes.Where(x => x.SalesTaxesTranId == item.id).SingleOrDefaultAsync();
+                    if (dbSalesText != null)
+                    {
+                        dbSalesText.SalesTaxesTranId = item.id;
+                        dbSalesText.Description = item.description;
+                        dbSalesText.GeneralLedgerAccountId = item.generalLedgerAccount != null ? item.generalLedgerAccount.id : 0;
+                        dbSalesText.UpdatedAt = item.updatedAt;
+                        dbSalesText.CreatedAt = item.createdAt;
+                        dbSalesText.Country = item.country;
+                        dbSalesText.State = item.state;
+                        dbSalesText.Slug = item.slug;
+                        dbSalesText.TaxCode = item.taxCode;
+                        dbSalesText.TaxRate = Convert.ToDecimal(item.taxRate);
+                        erpDbContext.Update(dbSalesText);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var newdbSalesText = new SalesTaxis
+                        {
+                            SalesTaxesTranId = item.id,
+                            GeneralLedgerAccountId = item.generalLedgerAccount != null ? item.generalLedgerAccount.id : 0,
+                            UpdatedAt = item.updatedAt,
+                            CreatedAt = item.createdAt,
+                            Description = item.description,
+                            Country = item.country,
+                            State = item.state,
+                            Slug = item.slug,
+                            TaxCode = item.taxCode,
+                            TaxRate = Convert.ToDecimal(item.taxRate),
+                        };
+                        await erpDbContext.SalesTaxes.AddAsync(newdbSalesText);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertPaymentMethod(string jspaymentmethods)
+        {
+            try
+            {
+                var paymentMethods = JSpayment_methods.FromJson(jspaymentmethods);
+                foreach (var paymentMethod in paymentMethods)
+                {
+                    var dbPaymentMethod = await erpDbContext.PaymentMethods.Where(x => x.PaymentMethodTranId == paymentMethod.id).SingleOrDefaultAsync();
+                    if (dbPaymentMethod != null)
+                    {
+                        dbPaymentMethod.PaymentMethod1 = paymentMethod.paymentMethod;
+                        dbPaymentMethod.PaymentMethodTranId = paymentMethod.id;
+                        dbPaymentMethod.IsCreditCardPayment = paymentMethod.isCreditCardPayment;
+                        dbPaymentMethod.IsAccountsPayableMethod = paymentMethod.isAccountsPayableMethod;
+                        dbPaymentMethod.MethodDescription = paymentMethod.methodDescription;
+                        dbPaymentMethod.Slug = paymentMethod.slug;
+                        dbPaymentMethod.UpdatedAt = paymentMethod.updatedAt;
+                        dbPaymentMethod.CreatedAt = paymentMethod.createdAt;
+                        erpDbContext.PaymentMethods.Update(dbPaymentMethod);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var nwPaymentMethod = new PaymentMethod
+                        {
+                            PaymentMethod1 = paymentMethod.paymentMethod,
+                            PaymentMethodTranId = paymentMethod.id,
+                            IsCreditCardPayment = paymentMethod.isCreditCardPayment,
+                            IsAccountsPayableMethod = paymentMethod.isAccountsPayableMethod,
+                            MethodDescription = paymentMethod.methodDescription,
+                            Slug = paymentMethod.slug,
+                            UpdatedAt = paymentMethod.updatedAt,
+                            CreatedAt = paymentMethod.createdAt,
+                        };
+                        await erpDbContext.PaymentMethods.AddAsync(nwPaymentMethod);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertContact(string contactModelData)
+        {
+            try
+            {
+                var customers = CustomerDetails.FromJson(contactModelData);
+
+                await UtilObject.InsertOrderSource(customers);
+                await UtilObject.InsertPaymentTerm(customers);
+                await UtilObject.InsertLogoMaster(customers);
+                await UtilObject.InsertCustomerGroup(customers);
+
+                foreach (CustomerDetails module in customers)
+                {
+                    LogoMaster logoDetails = null;
+                    if (module.logo != null)
+                    {
+                        logoDetails = UtilObject.erpDbContext.LogoMasters.Where(x => x.LogoTranId == module.logo.id).SingleOrDefault();
+                    }
+                    OrderSourceMaster ordersource = null;
+                    if (module.orderSource != null)
+                    {
+                        ordersource = UtilObject.erpDbContext.OrderSourceMasters.Where(x => x.OrderSourceTranId == module.orderSource.id).SingleOrDefault();
+                    }
+                    Models.PaymentTerm paymentTerms = null;
+                    if (module.paymentTerm != null)
+                    {
+                        paymentTerms = UtilObject.erpDbContext.PaymentTerms.Where(x => x.PaymentTermsTranId == module.paymentTerm.id).SingleOrDefault();
+                    }
+                    Models.CustomerGroup customerGroup = null;
+                    if (module.customerGroup != null)
+                    {
+                        customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(x => x.CustomerGroupTranId == module.customerGroup.id).SingleOrDefault();
+                    }
+                    var dbCustomer = UtilObject.erpDbContext.CustomerMasters.Where(x => x.CustomerTranId == module.id).SingleOrDefault();
+                    if (dbCustomer != null)
+                    {
+                        dbCustomer.CustomerCode = module.customer;
+                        dbCustomer.FirstName = module.name;
+                        dbCustomer.LastName = module.name;
+                        dbCustomer.Slug = module.slug;
+                        dbCustomer.PhoneExtension = module.phone;
+                        dbCustomer.Email = module.email;
+                        dbCustomer.Phone = module.phone;
+                        dbCustomer.CreatedAt = module.createdAt;
+                        dbCustomer.UpdatedAt = module.updatedAt;
+                        dbCustomer.CustomerTranId = module.id;
+                        dbCustomer.AveragePayDays = module.averagePayDays;
+                        dbCustomer.BoFlag = module.boFlag;
+                        dbCustomer.AlwaysShipCompleteFlag = module.alwaysShipCompleteFlag;
+                        dbCustomer.PoRequiredFlag = module.poRequiredFlag;
+                        dbCustomer.CcfFlag = module.ccfFlag;
+                        dbCustomer.CrLimit = module.crLimit;
+                        dbCustomer.InvoiceEmail = module.invoiceEmail;
+                        dbCustomer.Customer = module.customer;
+                        dbCustomer.SicCode = module.sicCode;
+                        dbCustomer.TaxId = module.taxId;
+                        dbCustomer.TaxExempt = module.taxExempt;
+                        dbCustomer.GraceDays = module.graceDays;
+                        dbCustomer.HasConsolidatedInvoices = module.hasConsolidatedInvoices;
+                        dbCustomer.IsAssessFinanceCharges = module.isAssessFinanceCharges;
+                        dbCustomer.StatementDestinationEmail = module.statementDestinationEmail;
+                        dbCustomer.OrderAcknowledgementEmail = module.orderAcknowledgementEmail;
+                        dbCustomer.ShippingConfirmationEmail = module.shippingConfirmationEmail;
+                        dbCustomer.PickupConfirmationEmail = module.pickupConfirmationEmail;
+                        dbCustomer.OrderAcknowledgementEmailSelect = module.orderAcknowledgementEmailSelect;
+                        dbCustomer.ShippingConfirmationEmailSelect = module.shippingConfirmationEmailSelect;
+                        dbCustomer.PickupConfirmationEmailSelect = module.pickupConfirmationEmailSelect;
+                        dbCustomer.IsAlwaysPassCreditCheck = module.isAlwaysPassCreditCheck;
+                        dbCustomer.IsPreferFullLots = module.isPreferFullLots;
+                        dbCustomer.IsRequireFullLots = module.isRequireFullLots;
+                        dbCustomer.ExternalDocparserParserId = module.externalDocparserParserId;
+                        dbCustomer.LocationToBlind = module.locationToBlind;
+                        dbCustomer.InvoiceOptionEmail = module.invoiceOptionEmail;
+                        dbCustomer.InvoiceOptionPrint = module.invoiceOptionPrint;
+                        dbCustomer.CooRequiredFlag = module.cooRequiredFlag;
+                        dbCustomer.IsStateTaxExempt = module.isStateTaxExempt;
+                        dbCustomer.IsSyncToHubSpot = module.isSyncToHubSpot;
+                        dbCustomer.Website = module.website;
+                        dbCustomer.PrintPriceOnPickingSlip = module.printPriceOnPackingSlip;
+                        dbCustomer.PrintPriceOnPackingSlip = module.printPriceOnPackingSlip;
+                        dbCustomer.IsDraft = module.isDraft;
+                        dbCustomer.QualityCheckTarget = module.qualityCheckTarget;
+                        dbCustomer.FontColor = module.fontColor;
+                        dbCustomer.BorderColor = module.borderColor;
+                        dbCustomer.ShadingColor = module.shadingColor;
+                        dbCustomer.LabelQuantity = module.labelQuantity;
+                        dbCustomer.PackingSlipPdfTemplate = module.packingSlipPdfTemplate;
+                        dbCustomer.PaymentTermId = paymentTerms != null ? paymentTerms.Id : 0;
+                        dbCustomer.LogoMasterId = logoDetails != null ? logoDetails.Id : 0;
+                        dbCustomer.OrderSourceMasterId = ordersource != null ? ordersource.Id : 0;
+                        dbCustomer.CustomerGroupId = customerGroup != null ? customerGroup.Id : 0;
+                        UtilObject.erpDbContext.CustomerMasters.Update(dbCustomer);
+                    }
+                    else
+                    {
+                        var newCustomer = new CustomerMaster
+                        {
+                            CustomerCode = module.customer,
+                            FirstName = module.name,
+                            LastName = module.name,
+                            Slug = module.slug,
+                            PhoneExtension = module.phone,
+                            Email = module.email,
+                            Phone = module.phone,
+                            CreatedAt = module.createdAt,
+                            UpdatedAt = module.updatedAt,
+                            CustomerTranId = module.id,
+                            AveragePayDays = module.averagePayDays,
+                            BoFlag = module.boFlag,
+                            AlwaysShipCompleteFlag = module.alwaysShipCompleteFlag,
+                            PoRequiredFlag = module.poRequiredFlag,
+                            CcfFlag = module.ccfFlag,
+                            CrLimit = module.crLimit,
+                            InvoiceEmail = module.invoiceEmail,
+                            Customer = module.customer,
+                            SicCode = module.sicCode,
+                            TaxId = module.taxId,
+                            TaxExempt = module.taxExempt,
+                            GraceDays = module.graceDays,
+                            HasConsolidatedInvoices = module.hasConsolidatedInvoices,
+                            IsAssessFinanceCharges = module.isAssessFinanceCharges,
+                            StatementDestinationEmail = module.statementDestinationEmail,
+                            OrderAcknowledgementEmail = module.orderAcknowledgementEmail,
+                            ShippingConfirmationEmail = module.shippingConfirmationEmail,
+                            PickupConfirmationEmail = module.pickupConfirmationEmail,
+                            OrderAcknowledgementEmailSelect = module.orderAcknowledgementEmailSelect,
+                            ShippingConfirmationEmailSelect = module.shippingConfirmationEmailSelect,
+                            PickupConfirmationEmailSelect = module.pickupConfirmationEmailSelect,
+                            IsAlwaysPassCreditCheck = module.isAlwaysPassCreditCheck,
+                            IsPreferFullLots = module.isPreferFullLots,
+                            IsRequireFullLots = module.isRequireFullLots,
+                            ExternalDocparserParserId = module.externalDocparserParserId,
+                            LocationToBlind = module.locationToBlind,
+                            InvoiceOptionEmail = module.invoiceOptionEmail,
+                            InvoiceOptionPrint = module.invoiceOptionPrint,
+                            CooRequiredFlag = module.cooRequiredFlag,
+                            IsStateTaxExempt = module.isStateTaxExempt,
+                            IsSyncToHubSpot = module.isSyncToHubSpot,
+                            Website = module.website,
+                            PrintPriceOnPickingSlip = module.printPriceOnPackingSlip,
+                            PrintPriceOnPackingSlip = module.printPriceOnPackingSlip,
+                            IsDraft = module.isDraft,
+                            QualityCheckTarget = module.qualityCheckTarget,
+                            FontColor = module.fontColor,
+                            BorderColor = module.borderColor,
+                            ShadingColor = module.shadingColor,
+                            LabelQuantity = module.labelQuantity,
+                            PackingSlipPdfTemplate = module.packingSlipPdfTemplate,
+                            PaymentTermId = paymentTerms != null ? paymentTerms.Id : 0,
+                            LogoMasterId = logoDetails != null ? logoDetails.Id : 0,
+                            OrderSourceMasterId = ordersource != null ? ordersource.Id : 0,
+                            CustomerGroupId = customerGroup != null ? customerGroup.Id : 0,
+                        };
+                        UtilObject.erpDbContext.CustomerMasters.Add(newCustomer);
+                    }
+                    UtilObject.erpDbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertItems(string itemModelData)
+        {
+            try
+            {
+
+                var item = ItemModule.FromJson(itemModelData);
+                foreach (ItemModule itemModule in item)
+                {
+                    var ret = UtilObject.erpDbContext.Database.
+                         ExecuteSqlRaw("EXEC INSERT_ITEM_MASTER @item_id, @warehouse_id, @purchase_orders, @quantity_on_purchase_order, " +
+                         "@quantity_on_hand, @quantity_committed,  @quantity_available, @item_name, @warehouse_code, @unit_id, @unit_symbol, " +
+                         "@display_unit_id, @display_unit_symbol",
+                         parameters: new SqlParameter[]
+                         {
+                            new SqlParameter("item_id",itemModule.ItemId),
+                            new SqlParameter("warehouse_id",itemModule.WarehouseId),
+                            new SqlParameter("purchase_orders",string.Empty),
+                            new SqlParameter("quantity_on_purchase_order",itemModule.QuantityOnPurchaseOrder),
+                            new SqlParameter("quantity_on_hand",itemModule.QuantityOnHand),
+                            new SqlParameter("quantity_committed",itemModule.QuantityCommitted),
+                            new SqlParameter("quantity_available",itemModule.QuantityAvailable),
+                            new SqlParameter("item_name",itemModule.ItemName),
+                            new SqlParameter("warehouse_code",itemModule.WarehouseCode),
+                            new SqlParameter("unit_id",itemModule.UnitId),
+                            new SqlParameter("unit_symbol",itemModule.UnitSymbol),
+                            new SqlParameter("display_unit_id",itemModule.DisplayUnitId),
+                            new SqlParameter("display_unit_symbol",itemModule.DisplayUnitSymbol)
+                         });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                GC.Collect();
+            }
+
+        }
+
+        private static async Task InsertOrginCountry(string jsOrgincontry)
+        {
+            try
+            {
+                var jsContry = JSOriginCountry.FromJson(jsOrgincontry);
+                foreach (var item in jsContry)
+                {
+                    var dbOrgin = await erpDbContext.OriginCountries.Where(x => x.CountryTranId == item.id).SingleOrDefaultAsync();
+                    if (dbOrgin != null)
+                    {
+                        dbOrgin.CountryCode = item.countryCode;
+                        dbOrgin.CountryName = item.countryName;
+                        dbOrgin.Slug = item.slug;
+                        dbOrgin.CountryTranId = item.id;
+                        dbOrgin.CreatedAt = item.createdAt;
+                        dbOrgin.UpdatedAt = item.updatedAt;
+                        erpDbContext.OriginCountries.Update(dbOrgin);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var newOrginCountry = new OriginCountry
+                        {
+                            CountryCode = item.countryCode,
+                            CountryName = item.countryName,
+                            Slug = item.slug,
+                            CountryTranId = item.id,
+                            CreatedAt = item.createdAt,
+                            UpdatedAt = item.updatedAt,
+                        };
+                        await erpDbContext.OriginCountries.AddAsync(newOrginCountry);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task InsertItemCategory(string jsItemCategorys)
+        {
+            try
+            {
+                var jsCategory = JSItemCategory.FromJson(jsItemCategorys);
+                foreach (var item in jsCategory)
+                {
+                    var dbItemCategory = await erpDbContext.ItemCategories.Where(x => x.CategoryTranId == item.id).SingleOrDefaultAsync();
+                    if (dbItemCategory != null)
+                    {
+                        dbItemCategory.ParentCategory = item.parent != null ? item.parent.id : 0;
+                        dbItemCategory.Category = item.name;
+                        dbItemCategory.FactoryMinimumLinePrice = Convert.ToDecimal(item.factoryMinimumLinePrice);
+                        dbItemCategory.ProductionMinimumLinePrice = Convert.ToDecimal(item.productionMinimumLinePrice);
+                        dbItemCategory.CountryOfOrigin = item.countryOfOrigin;
+                        dbItemCategory.Code = item.code;
+                        dbItemCategory.CommodityCode = item.commodityCode;
+                        dbItemCategory.CreatedAt = Convert.ToDateTime(item.createdAt);
+                        dbItemCategory.UpdatedAt = Convert.ToDateTime(item.updatedAt);
+                        dbItemCategory.CategoryTranId = item.id;
+                        erpDbContext.ItemCategories.Update(dbItemCategory);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var newCategory = new ItemCategory
+                        {
+                            ParentCategory = item.parent != null ? item.parent.id : 0,
+                            Category = item.name,
+                            FactoryMinimumLinePrice = Convert.ToDecimal(item.factoryMinimumLinePrice),
+                            ProductionMinimumLinePrice = Convert.ToDecimal(item.productionMinimumLinePrice),
+                            CountryOfOrigin = item.countryOfOrigin,
+                            Code = item.code,
+                            CommodityCode = item.commodityCode,
+                            CreatedAt = Convert.ToDateTime(item.createdAt),
+                            UpdatedAt = Convert.ToDateTime(item.updatedAt),
+                            CategoryTranId = item.id,
+                        };
+                        await erpDbContext.ItemCategories.AddAsync(newCategory);
+                        await erpDbContext.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private static async Task InsertEasyPostMethods(JSSystemShipVia[] jSSystemShipVias)
@@ -688,7 +1276,6 @@ namespace ERPAPI_APP
             finally { GC.Collect(); }
         }
 
-       
         private static async Task<decimal> ConvertToDecimal(string value)
         {
             decimal retValue = decimal.Zero;
@@ -696,10 +1283,12 @@ namespace ERPAPI_APP
             return retValue;
         }
 
-        private static async Task InsertAddOn(List<AddOnMainClass> addOnMainClass)
+        private static async Task InsertAddOn(string jsaddOnMainClass)
         {
             try
             {
+                var addOnMainClass = AddOnMainClass.FromJson(jsaddOnMainClass);
+
                 foreach (AddOnMainClass addonMntbl in addOnMainClass)
                 {
                     var objAddon = erpDbContext.AddOns.Where(x => x.AddOnTranId == addonMntbl.Id).SingleOrDefault();
@@ -806,7 +1395,7 @@ namespace ERPAPI_APP
             }
         }
 
-        internal static async Task InsertOrderSource(CustomerDetails[] customerDetails)
+        private static async Task InsertOrderSource(CustomerDetails[] customerDetails)
         {
             try
             {
@@ -843,7 +1432,7 @@ namespace ERPAPI_APP
             }
         }
 
-        internal static async Task InsertLogoMaster(CustomerDetails[] customerDetails)
+        private static async Task InsertLogoMaster(CustomerDetails[] customerDetails)
         {
             try
             {
@@ -890,7 +1479,7 @@ namespace ERPAPI_APP
             }
         }
 
-        internal static async Task InsertPaymentTerm(CustomerDetails[] customerDetails)
+        private static async Task InsertPaymentTerm(CustomerDetails[] customerDetails)
         {
             try
             {
@@ -933,7 +1522,7 @@ namespace ERPAPI_APP
             }
         }
 
-        internal static async Task InsertCustomerGroup(CustomerDetails[] customerDetails)
+        private static async Task InsertCustomerGroup(CustomerDetails[] customerDetails)
         {
             try
             {
@@ -969,6 +1558,6 @@ namespace ERPAPI_APP
                 throw ex;
             }
         }
-       
+
     }
 }

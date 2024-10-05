@@ -45,6 +45,10 @@ public partial class ErpDbContext : DbContext
 
     public virtual DbSet<EasyPostMethod> EasyPostMethods { get; set; }
 
+    public virtual DbSet<ItemCategory> ItemCategories { get; set; }
+
+    public virtual DbSet<ItemImage> ItemImages { get; set; }
+
     public virtual DbSet<ItemMaster> ItemMasters { get; set; }
 
     public virtual DbSet<ItemPriceInformation> ItemPriceInformations { get; set; }
@@ -57,9 +61,15 @@ public partial class ErpDbContext : DbContext
 
     public virtual DbSet<OrderSourceMaster> OrderSourceMasters { get; set; }
 
+    public virtual DbSet<OriginCountry> OriginCountries { get; set; }
+
+    public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+
     public virtual DbSet<PaymentTerm> PaymentTerms { get; set; }
 
     public virtual DbSet<RegionMaster> RegionMasters { get; set; }
+
+    public virtual DbSet<SalesTaxis> SalesTaxes { get; set; }
 
     public virtual DbSet<SystemShipVium> SystemShipVia { get; set; }
 
@@ -522,6 +532,73 @@ public partial class ErpDbContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<ItemCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Item_Cat__3214EC07C431EB3D");
+
+            entity.ToTable("Item_Category");
+
+            entity.Property(e => e.Category)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.CategoryTranId).HasColumnName("Category_TranId");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.CommodityCode)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("commodityCode");
+            entity.Property(e => e.CountryOfOrigin)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("countryOfOrigin");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.FactoryMinimumLinePrice)
+                .HasDefaultValue(0m)
+                .HasColumnType("numeric(18, 2)")
+                .HasColumnName("factoryMinimumLinePrice");
+            entity.Property(e => e.ParentCategory)
+                .HasDefaultValue(0)
+                .HasColumnName("Parent_Category");
+            entity.Property(e => e.ProductionMinimumLinePrice)
+                .HasDefaultValue(0m)
+                .HasColumnType("numeric(18, 2)")
+                .HasColumnName("productionMinimumLinePrice");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<ItemImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Item_Ima__3214EC075F90B80B");
+
+            entity.ToTable("Item_Image");
+
+            entity.Property(e => e.ETag)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("eTag");
+            entity.Property(e => e.FileName)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("File_Name");
+            entity.Property(e => e.ItemImageTranId).HasColumnName("ItemImage_TranId");
+            entity.Property(e => e.ItemMasterId).HasColumnName("Item_MasterId");
+            entity.Property(e => e.Key)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.Sku)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("SKU");
+        });
+
         modelBuilder.Entity<ItemMaster>(entity =>
         {
             entity.HasKey(e => e.ItemId);
@@ -680,6 +757,15 @@ public partial class ErpDbContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.Httpmethod)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("HTTPMETHOD");
+            entity.Property(e => e.MethodName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
             entity.Property(e => e.TokanType)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -704,6 +790,63 @@ public partial class ErpDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<OriginCountry>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__OriginCo__3214EC07D40CD0CA");
+
+            entity.ToTable("OriginCountry");
+
+            entity.Property(e => e.CountryCode)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.CountryName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.CountryTranId)
+                .HasDefaultValue(0)
+                .HasColumnName("Country_TranId");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Slug)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Payment___3214EC07B700AEE9");
+
+            entity.ToTable("Payment_method");
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.MethodDescription)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.PaymentMethod1)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("PaymentMethod");
+            entity.Property(e => e.PaymentMethodTranId).HasColumnName("PaymentMethod_TranId");
+            entity.Property(e => e.Slug)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<PaymentTerm>(entity =>
@@ -751,6 +894,47 @@ public partial class ErpDbContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.States).IsUnicode(false);
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SalesTaxis>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Sales_Ta__3214EC072B77D5EB");
+
+            entity.ToTable("Sales_Taxes");
+
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.GeneralLedgerAccountId).HasDefaultValue(0);
+            entity.Property(e => e.SalesTaxesTranId)
+                .HasDefaultValue(0)
+                .HasColumnName("SalesTaxes_TranId");
+            entity.Property(e => e.Slug)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.State)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.TaxCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.TaxRate)
+                .HasDefaultValue(0.00m)
+                .HasColumnType("numeric(18, 2)");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -804,6 +988,17 @@ public partial class ErpDbContext : DbContext
             entity.ToTable("Unit_Master");
 
             entity.Property(e => e.UnitId).HasColumnName("Unit_Id");
+            entity.Property(e => e.ConversionFactor).HasColumnType("numeric(18, 3)");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.GroupLabel)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("Group_Label");
+            entity.Property(e => e.Height).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.Length).HasColumnType("numeric(18, 2)");
             entity.Property(e => e.UnitName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -813,6 +1008,15 @@ public partial class ErpDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Unit_Symbol");
             entity.Property(e => e.UnitTranId).HasDefaultValue(0);
+            entity.Property(e => e.UpcCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Visible).HasDefaultValue(true);
+            entity.Property(e => e.Width).HasColumnType("numeric(18, 2)");
         });
 
         modelBuilder.Entity<WarehouseMaster>(entity =>

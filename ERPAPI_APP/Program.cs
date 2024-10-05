@@ -1,3 +1,5 @@
+using ERPAPI_APP.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -9,6 +11,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.AddJsonFile("appsettings.json");
+var configuration = configurationBuilder.Build();
+builder.Services.AddDbContext<ErpDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -18,6 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 

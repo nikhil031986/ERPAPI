@@ -65,7 +65,7 @@
   {
     "ContainingType": "ERPAPI_APP.Controllers.CustomerController",
     "Method": "GetCustomer",
-    "RelativePath": "api/Customer",
+    "RelativePath": "api/Customer/GetCustomer",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -80,8 +80,33 @@
         ],
         "StatusCode": 200
       }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.CustomerController",
+    "Method": "GetCustomerById",
+    "RelativePath": "api/Customer/GetCustomerById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
     ],
-    "EndpointName": "GetCustomer"
+    "ReturnTypes": [
+      {
+        "Type": "ERPAPI_APP.Models.GetCustomer",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "ERPAPI_APP.Controllers.CustomerLocationController",
@@ -114,6 +139,26 @@
     "Parameters": [],
     "ReturnTypes": [],
     "EndpointName": "DataMigration"
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetItemCategory",
+    "RelativePath": "api/Item/GetItemCategory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.ItemCategory, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "ERPAPI_APP.Controllers.PaymentTermsController",
@@ -169,6 +214,22 @@
         "Name": "userDetails",
         "Type": "ERPAPI_APP.Models.UserDetails",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.UserController",
+    "Method": "CheckEamilId",
+    "RelativePath": "api/User/CheckEmaiId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "emailId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

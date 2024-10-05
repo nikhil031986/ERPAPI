@@ -27,6 +27,13 @@
         public string Phone { get; set; }
         public string emailId { get; set; }
         public string password { get; set; }
+        public string companyName { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
+        public string state { get; set; }
+        public string zipCode { get; set; }
     }
     public partial class GetCustomerLocation
     {

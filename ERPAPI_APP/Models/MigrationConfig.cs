@@ -20,4 +20,8 @@ public partial class MigrationConfig
     public DateTime? UpdateAt { get; set; }
 
     public string? Description { get; set; }
+
+    public string? MethodName { get; set; }
+
+    public string Httpmethod { get; set; } = null!;
 }

@@ -34,41 +34,141 @@ namespace ERPAPI_APP.DataBaseAccess
                 TaxExempt = x.TaxExempt,
                 GraceDays = x.GraceDays,
                 HasConsolidatedInvoices = x.HasConsolidatedInvoices,
-                IsAssessFinanceCharges =x.IsAssessFinanceCharges,
+                IsAssessFinanceCharges = x.IsAssessFinanceCharges,
                 StatementDestinationEmail = x.StatementDestinationEmail,
                 OrderAcknowledgementEmail = x.OrderAcknowledgementEmail,
-                ShippingConfirmationEmail= x.ShippingConfirmationEmail,
-                PickupConfirmationEmail= x.PickupConfirmationEmail,
+                ShippingConfirmationEmail = x.ShippingConfirmationEmail,
+                PickupConfirmationEmail = x.PickupConfirmationEmail,
                 OrderAcknowledgementEmailSelect = x.OrderAcknowledgementEmailSelect,
-                ShippingConfirmationEmailSelect= x.ShippingConfirmationEmailSelect,
+                ShippingConfirmationEmailSelect = x.ShippingConfirmationEmailSelect,
                 PickupConfirmationEmailSelect = x.PickupConfirmationEmailSelect,
                 IsAlwaysPassCreditCheck = x.IsAlwaysPassCreditCheck,
                 IsPreferFullLots = x.IsPreferFullLots,
                 IsRequireFullLots = x.IsRequireFullLots,
                 ExternalDocparserParserId = x.ExternalDocparserParserId,
-                LocationToBlind =x.LocationToBlind,
+                LocationToBlind = x.LocationToBlind,
                 InvoiceOptionEmail = x.InvoiceOptionEmail,
                 InvoiceOptionPrint = x.InvoiceOptionPrint,
                 CooRequiredFlag = x.CooRequiredFlag,
                 IsStateTaxExempt = x.IsStateTaxExempt,
-                IsSyncToHubSpot  = x.IsSyncToHubSpot,
+                IsSyncToHubSpot = x.IsSyncToHubSpot,
                 Website = x.Website,
-                PrintPriceOnPickingSlip =x.PrintPriceOnPickingSlip,
-                PrintPriceOnPackingSlip= x.PrintPriceOnPackingSlip,
+                PrintPriceOnPickingSlip = x.PrintPriceOnPickingSlip,
+                PrintPriceOnPackingSlip = x.PrintPriceOnPackingSlip,
                 IsDraft = x.IsDraft,
                 QualityCheckTarget = x.QualityCheckTarget,
                 FontColor = x.FontColor,
                 BorderColor = x.BorderColor,
                 ShadingColor = x.ShadingColor,
                 LabelQuantity = x.LabelQuantity,
-                PackingSlipPdfTemplate=x.PackingSlipPdfTemplate,
-                paymentTerm = UtilObject.erpDbContext.PaymentTerms.Where(p=> p.Id == x.PaymentTermId).ToList(),
-                Logo = UtilObject.erpDbContext.LogoMasters.Where(l=> l.Id == x.LogoMasterId).ToList(),
-                orderSource= UtilObject.erpDbContext.OrderSourceMasters.Where(o=> o.Id == x.OrderSourceMasterId).ToList(),
-                customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(c=>c.Id == x.CustomerGroupId).ToList(),
-    }).ToListAsync();
+                PackingSlipPdfTemplate = x.PackingSlipPdfTemplate,
+                paymentTerm = UtilObject.erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
+                Logo = UtilObject.erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
+                orderSource = UtilObject.erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
+                customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
+            }).ToListAsync();
 
-    internal static async Task<List<CustomerMaster>> FindCustomer(int? customerId)
+        internal static async Task<GetCustomer> GetCustomerById(int customerId)
+                => await UtilObject.erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).
+                Select(x => new GetCustomer
+                {
+                    CustomerId = x.CustomerId,
+                    CustomerCode = x.CustomerCode,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Slug = x.Slug,
+                    PhoneExtension = x.PhoneExtension,
+                    Titled = x.Titled,
+                    Email = x.Email,
+                    Contact = x.Contact,
+                    Phone = x.Phone,
+                    CreatedAt = x.CreatedAt,
+                    UpdatedAt = x.UpdatedAt,
+                    CustomerTranId = x.CustomerTranId,
+                    AveragePayDays = x.AveragePayDays,
+                    BoFlag = x.BoFlag,
+                    AlwaysShipCompleteFlag = x.AlwaysShipCompleteFlag,
+                    PoRequiredFlag = x.PoRequiredFlag,
+                    CcfFlag = x.CcfFlag,
+                    CrLimit = x.CrLimit,
+                    InvoiceEmail = x.InvoiceEmail,
+                    Customer = x.Customer,
+                    SicCode = x.SicCode,
+                    TaxId = x.TaxId,
+                    TaxExempt = x.TaxExempt,
+                    GraceDays = x.GraceDays,
+                    HasConsolidatedInvoices = x.HasConsolidatedInvoices,
+                    IsAssessFinanceCharges = x.IsAssessFinanceCharges,
+                    StatementDestinationEmail = x.StatementDestinationEmail,
+                    OrderAcknowledgementEmail = x.OrderAcknowledgementEmail,
+                    ShippingConfirmationEmail = x.ShippingConfirmationEmail,
+                    PickupConfirmationEmail = x.PickupConfirmationEmail,
+                    OrderAcknowledgementEmailSelect = x.OrderAcknowledgementEmailSelect,
+                    ShippingConfirmationEmailSelect = x.ShippingConfirmationEmailSelect,
+                    PickupConfirmationEmailSelect = x.PickupConfirmationEmailSelect,
+                    IsAlwaysPassCreditCheck = x.IsAlwaysPassCreditCheck,
+                    IsPreferFullLots = x.IsPreferFullLots,
+                    IsRequireFullLots = x.IsRequireFullLots,
+                    ExternalDocparserParserId = x.ExternalDocparserParserId,
+                    LocationToBlind = x.LocationToBlind,
+                    InvoiceOptionEmail = x.InvoiceOptionEmail,
+                    InvoiceOptionPrint = x.InvoiceOptionPrint,
+                    CooRequiredFlag = x.CooRequiredFlag,
+                    IsStateTaxExempt = x.IsStateTaxExempt,
+                    IsSyncToHubSpot = x.IsSyncToHubSpot,
+                    Website = x.Website,
+                    PrintPriceOnPickingSlip = x.PrintPriceOnPickingSlip,
+                    PrintPriceOnPackingSlip = x.PrintPriceOnPackingSlip,
+                    IsDraft = x.IsDraft,
+                    QualityCheckTarget = x.QualityCheckTarget,
+                    FontColor = x.FontColor,
+                    BorderColor = x.BorderColor,
+                    ShadingColor = x.ShadingColor,
+                    LabelQuantity = x.LabelQuantity,
+                    PackingSlipPdfTemplate = x.PackingSlipPdfTemplate,
+                    paymentTerm = UtilObject.erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
+                    Logo = UtilObject.erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
+                    orderSource = UtilObject.erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
+                    customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
+                }).SingleOrDefaultAsync();
+
+        internal static async Task<List<CustomerMaster>> FindCustomer(int? customerId)
         => await UtilObject.erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).ToListAsync();
-}
+
+        internal static async Task<CustomerMaster> CreateNewCustomer(SingUp singUp)
+        {
+            try
+            {
+                var existsCustomer = await UtilObject.erpDbContext.CustomerMasters.Where(x => x.Email == singUp.emailId).SingleOrDefaultAsync();
+                if (existsCustomer == null)
+                {
+                    var newCustomer = new CustomerMaster
+                    {
+                        FirstName = singUp.FirstName,
+                        LastName = singUp.LastName,
+                        Email = singUp.emailId,
+                        Phone = singUp.Phone,
+                        CreatedAt = DateTime.Now,
+                        InvoiceEmail = singUp.emailId,
+                        Customer = singUp.FirstName + " " + singUp.LastName,
+                        StatementDestinationEmail = singUp.emailId,
+                        OrderAcknowledgementEmail = singUp.emailId,
+                        ShippingConfirmationEmail = singUp.emailId,
+                        PickupConfirmationEmail = singUp.emailId,
+                    };
+                    await UtilObject.erpDbContext.CustomerMasters.AddAsync(newCustomer);
+                    await UtilObject.erpDbContext.SaveChangesAsync();
+                    return newCustomer;
+                }
+                else
+                {
+                    return existsCustomer;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
 }

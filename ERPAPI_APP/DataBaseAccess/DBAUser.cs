@@ -121,7 +121,10 @@ namespace ERPAPI_APP.DataBaseAccess
         {
             try
             {
-                var newContact= await DAContact.CreateContact(singup);
+              
+                var newCustomer = await DBACustomer.CreateNewCustomer(singup);
+
+                var newContact= await DAContact.CreateContact(singup, newCustomer.CustomerId);
                 var newUser = new AspNetUser
                 {
                     EmailId = singup.emailId,
@@ -131,7 +134,7 @@ namespace ERPAPI_APP.DataBaseAccess
                     CreateAt = DateTime.Now,
                     UpdateAt = DateTime.Now,
                     IsFirstTimeLogin = false,
-                    CustomerId = newContact.Id,
+                    CustomerId = newCustomer.CustomerId,
                 };
                 await UtilObject.erpDbContext.AspNetUsers.AddAsync(newUser);
                 await UtilObject.erpDbContext.SaveChangesAsync();
@@ -194,6 +197,26 @@ namespace ERPAPI_APP.DataBaseAccess
                 throw ex;
             }
 
+        }
+
+        internal static async Task<bool> CheckEmailId(string emailId)
+        {
+            try
+            {
+                var userEmailId = await UtilObject.erpDbContext.AspNetUsers.Where(x => x.EmailId == emailId).SingleOrDefaultAsync();
+                if(userEmailId == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

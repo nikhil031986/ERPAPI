@@ -17,8 +17,12 @@ namespace ERPAPI_APP.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet(Name = "GetCustomer")]
+        [HttpGet("GetCustomer")]
         public async Task<List<GetCustomer>> GetCustomer()
             => await DataBaseAccess.DBACustomer.GetCustomer();
+
+        [HttpGet("GetCustomerById")]
+        public async Task<GetCustomer> GetCustomerById(int customerId)
+            => await DataBaseAccess.DBACustomer.GetCustomerById(customerId);
     }
 }
