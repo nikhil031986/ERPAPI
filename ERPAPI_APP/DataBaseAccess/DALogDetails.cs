@@ -5,6 +5,8 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal static class DALogDetails
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task InsertLog(DbLog dbLog)
         {
             if(dbLog.ErrorMsg == null) { dbLog.ErrorMsg = string.Empty; }   
@@ -14,8 +16,8 @@ namespace ERPAPI_APP.DataBaseAccess
             if(dbLog.RequestApi == null) { dbLog.RequestApi = string.Empty; };
             if (dbLog.RequestDate == null) { dbLog.RequestDate = DateTime.Now;}
             if (dbLog.LogDate == null) { dbLog.LogDate = DateTime.Now;}
-            UtilObject.erpDbContext.DbLogs.Add(dbLog);
-            UtilObject.erpDbContext.SaveChanges();
+            erpDbContext.DbLogs.Add(dbLog);
+            erpDbContext.SaveChanges();
         }
     }
 }

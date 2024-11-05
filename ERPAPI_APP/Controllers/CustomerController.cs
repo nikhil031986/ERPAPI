@@ -1,5 +1,6 @@
 ﻿using ERPAPI_APP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ERPAPI_APP.Controllers
 {
@@ -24,5 +25,9 @@ namespace ERPAPI_APP.Controllers
         [HttpGet("GetCustomerById")]
         public async Task<GetCustomer> GetCustomerById(int customerId)
             => await DataBaseAccess.DBACustomer.GetCustomerById(customerId);
+
+        [HttpGet("GetCustomerDetails")]
+        public async Task<List<objcustomerDetails>> GetCustomerDetails(int customerId)
+            => await DataBaseAccess.DBAUser.GetCustomerDetails(customerId);
     }
 }

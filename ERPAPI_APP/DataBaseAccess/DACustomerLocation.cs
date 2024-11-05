@@ -3,11 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPAPI_APP.DataBaseAccess
 {
+
     internal class DACustomerLocation
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task<List<GetCustomerLocation>> GetCustomer_Location()
-            => await UtilObject.erpDbContext.CustomerLocationInformations
-                .Join(UtilObject.erpDbContext.CustomerMasters, p => p.CustomerId, pc => pc.CustomerId, (p, pc) => new { p, pc })
+            => await erpDbContext.CustomerLocationInformations
+                .Join(erpDbContext.CustomerMasters, p => p.CustomerId, pc => pc.CustomerId, (p, pc) => new { p, pc })
             .Select(m => new GetCustomerLocation
                 {
                     CustomerLocationId = m.p.CustomerLocationId,
@@ -32,7 +35,7 @@ namespace ERPAPI_APP.DataBaseAccess
                     CustomerLocationTranId = m.p.CustomerLocationTranId,
                     UpdatedAt = m.p.UpdatedAt,
                     CreatedAt = m.p.CreatedAt,
-                    region = UtilObject.erpDbContext.RegionMasters.Where(x=> x.Id == m.p.RegionId).ToList(),
+                    region = erpDbContext.RegionMasters.Where(x=> x.Id == m.p.RegionId).ToList(),
                 }).ToListAsync();
     
        

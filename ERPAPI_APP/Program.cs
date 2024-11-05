@@ -1,6 +1,8 @@
+using ERPAPI_APP;
 using ERPAPI_APP.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +13,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var configurationBuilder = new ConfigurationBuilder();
-configurationBuilder.AddJsonFile("appsettings.json");
-var configuration = configurationBuilder.Build();
-builder.Services.AddDbContext<ErpDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 
+builder.Services.AddDbContext<ErpDbContext>(ServiceLifetime.Transient);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +32,22 @@ app.UseAuthorization();
 
 app.UseDeveloperExceptionPage();
 
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
+
+app.UseDirectoryBrowser(new DirectoryBrowserOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
+
+
 app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -39,6 +55,7 @@ app.UseCors(x => x
                 .AllowCredentials());
 
 app.MapControllers();
+
 
 app.Use(async (context, next) =>
 {

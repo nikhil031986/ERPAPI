@@ -127,7 +127,7 @@ namespace ERPAPI_APP.JSONDataMigration
         [JsonProperty("updatedBy", NullValueHandling = NullValueHandling.Ignore)]
         public UpdatedBy UpdatedBy { get; set; }
     }
-    
+
     public partial class JSUnit
     {
         public int id { get; set; }
@@ -158,4 +158,28 @@ namespace ERPAPI_APP.JSONDataMigration
     {
         public static JsUnti_Master[] FromJson(string json) => JsonConvert.DeserializeObject<JsUnti_Master[]>(json, ERPAPI_APP.JSONDataMigration.Converter.Settings);
     }
+
+    public partial class itemPrice
+    {
+        public string itemName { get; set; }
+        public int quantityInUnit { get; set; }
+        public string customerName { get; set; }
+        public string unitSymbol { get; set; }
+        public string displayUnitSymbol { get; set; }
+        public double finalPricePerUnit { get; set; }
+        public double finalPricePerDisplayUnit { get; set; }
+        public List<int> quantityBreaksPerDisplayUnit { get; set; }
+        public List<double> priceBreaks { get; set; }
+    }
+
+    public partial class PriceList
+    {
+        public itemPrice ItemPrice { get; set; }
+    }
+
+    public partial class PriceList
+    {
+        public static PriceList[] FromJson(string json) => JsonConvert.DeserializeObject<PriceList[]>(json, ERPAPI_APP.JSONDataMigration.Converter.Settings);
+    }
+
 }

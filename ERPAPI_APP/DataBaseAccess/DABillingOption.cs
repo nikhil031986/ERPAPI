@@ -4,7 +4,8 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal class DABillingOption
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
         internal static async Task<List<BillingOption>> GetBilling_Option()
-            => await UtilObject.erpDbContext.BillingOptions.ToListAsync();
+            => await erpDbContext.BillingOptions.ToListAsync();
     }
 }

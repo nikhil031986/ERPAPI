@@ -5,8 +5,10 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal static class DBACustomer
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task<List<GetCustomer>> GetCustomer()
-            => await UtilObject.erpDbContext.CustomerMasters.Select(x => new GetCustomer
+            => await erpDbContext.CustomerMasters.Select(x => new GetCustomer
             {
                 CustomerId = x.CustomerId,
                 CustomerCode = x.CustomerCode,
@@ -62,14 +64,14 @@ namespace ERPAPI_APP.DataBaseAccess
                 ShadingColor = x.ShadingColor,
                 LabelQuantity = x.LabelQuantity,
                 PackingSlipPdfTemplate = x.PackingSlipPdfTemplate,
-                paymentTerm = UtilObject.erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
-                Logo = UtilObject.erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
-                orderSource = UtilObject.erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
-                customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
+                paymentTerm = erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
+                Logo = erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
+                orderSource = erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
+                customerGroup = erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
             }).ToListAsync();
 
         internal static async Task<GetCustomer> GetCustomerById(int customerId)
-                => await UtilObject.erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).
+                => await erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).
                 Select(x => new GetCustomer
                 {
                     CustomerId = x.CustomerId,
@@ -126,20 +128,20 @@ namespace ERPAPI_APP.DataBaseAccess
                     ShadingColor = x.ShadingColor,
                     LabelQuantity = x.LabelQuantity,
                     PackingSlipPdfTemplate = x.PackingSlipPdfTemplate,
-                    paymentTerm = UtilObject.erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
-                    Logo = UtilObject.erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
-                    orderSource = UtilObject.erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
-                    customerGroup = UtilObject.erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
+                    paymentTerm = erpDbContext.PaymentTerms.Where(p => p.Id == x.PaymentTermId).ToList(),
+                    Logo = erpDbContext.LogoMasters.Where(l => l.Id == x.LogoMasterId).ToList(),
+                    orderSource = erpDbContext.OrderSourceMasters.Where(o => o.Id == x.OrderSourceMasterId).ToList(),
+                    customerGroup = erpDbContext.CustomerGroups.Where(c => c.Id == x.CustomerGroupId).ToList(),
                 }).SingleOrDefaultAsync();
 
         internal static async Task<List<CustomerMaster>> FindCustomer(int? customerId)
-        => await UtilObject.erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).ToListAsync();
+        => await erpDbContext.CustomerMasters.Where(x => x.CustomerId == customerId).ToListAsync();
 
         internal static async Task<CustomerMaster> CreateNewCustomer(SingUp singUp)
         {
             try
             {
-                var existsCustomer = await UtilObject.erpDbContext.CustomerMasters.Where(x => x.Email == singUp.emailId).SingleOrDefaultAsync();
+                var existsCustomer = await erpDbContext.CustomerMasters.Where(x => x.Email == singUp.emailId).SingleOrDefaultAsync();
                 if (existsCustomer == null)
                 {
                     var newCustomer = new CustomerMaster
@@ -156,8 +158,8 @@ namespace ERPAPI_APP.DataBaseAccess
                         ShippingConfirmationEmail = singUp.emailId,
                         PickupConfirmationEmail = singUp.emailId,
                     };
-                    await UtilObject.erpDbContext.CustomerMasters.AddAsync(newCustomer);
-                    await UtilObject.erpDbContext.SaveChangesAsync();
+                    await erpDbContext.CustomerMasters.AddAsync(newCustomer);
+                    await erpDbContext.SaveChangesAsync();
                     return newCustomer;
                 }
                 else

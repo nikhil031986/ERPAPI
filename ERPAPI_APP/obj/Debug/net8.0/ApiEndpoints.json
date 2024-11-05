@@ -109,6 +109,32 @@
     ]
   },
   {
+    "ContainingType": "ERPAPI_APP.Controllers.CustomerController",
+    "Method": "GetCustomerDetails",
+    "RelativePath": "api/Customer/GetCustomerDetails",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.objcustomerDetails, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "ERPAPI_APP.Controllers.CustomerLocationController",
     "Method": "Customer_Location",
     "RelativePath": "api/CustomerLocation",
@@ -142,6 +168,146 @@
   },
   {
     "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "AddItemInCart",
+    "RelativePath": "api/Item/AddItemInCart",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Item_Code",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "quntity",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "refkey",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "unit",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "DeleteFromCart",
+    "RelativePath": "api/Item/DeleteFromCart",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ItemCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "refKey",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetAllUnit",
+    "RelativePath": "api/Item/GetAllUnit",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.UnitMaster, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetCartItem",
+    "RelativePath": "api/Item/GetCartItem",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "refKey",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.GetCartDetail, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetIdFromCategoryName",
+    "RelativePath": "api/Item/GetIdFromCategoryName",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryName",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetItemByItemCode",
+    "RelativePath": "api/Item/GetItemByItemCode",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ItemCode",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ERPAPI_APP.Models.ItemByCategory",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
     "Method": "GetItemCategory",
     "RelativePath": "api/Item/GetItemCategory",
     "HttpMethod": "GET",
@@ -159,6 +325,167 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetItemPrice",
+    "RelativePath": "api/Item/GetItemPrice",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Itemcode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Qty",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetItetmWiseCategory",
+    "RelativePath": "api/Item/GetItetmWiseCategory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.ItemCategory, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "GetMenuItem",
+    "RelativePath": "api/Item/GetMenuItem",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.MasterMenu, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.ItemController",
+    "Method": "ItemGetByCategory",
+    "RelativePath": "api/Item/ItemGetByCategory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.ItemByCategory, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.OrderController",
+    "Method": "CalCulationOfTax",
+    "RelativePath": "api/Order/CalCulationOfTax",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "taxCalulation",
+        "Type": "ERPAPI_APP.Models.TaxCalulation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.OrderController",
+    "Method": "GetOrderDetail",
+    "RelativePath": "api/Order/GetOrderDetail",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ERPAPI_APP.Models.GetOrderMaster, ERPAPI_APP, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.OrderController",
+    "Method": "PaymentDetail",
+    "RelativePath": "api/Order/PaymentDetail",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "paymentDetail",
+        "Type": "ERPAPI_APP.Models.paymentDetailsEntry",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ERPAPI_APP.Controllers.OrderController",
+    "Method": "SaveOrderDetail",
+    "RelativePath": "api/Order/SaveOrderDetail",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderMaster",
+        "Type": "ERPAPI_APP.Models.OrderMasterEntry",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ERPAPI_APP.Controllers.PaymentTermsController",

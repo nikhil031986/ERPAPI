@@ -1,5 +1,6 @@
 ﻿using ERPAPI_APP.JSONDataMigration;
 using ERPAPI_APP.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -8,20 +9,25 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Transactions;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace ERPAPI_APP.DataBaseAccess
 {
     internal class DBAUser
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task<List<AspNetUserList>> getUser()
-            => await UtilObject.erpDbContext.AspNetUsers.Select(x => new AspNetUserList
+            => await erpDbContext.AspNetUsers.Select(x => new AspNetUserList
             {
                 UserId = x.UserId,
                 EmailId = x.EmailId,
-                Customer = UtilObject.erpDbContext.CustomerMasters.Where(c => c.CustomerId == x.CustomerId).ToList(),
-                Compny = UtilObject.erpDbContext.Companies.Where(c => c.Id == x.CompanyId).ToList(),
-                AspNetRoles = UtilObject.erpDbContext.AspNetRoles
-                            .Join(UtilObject.erpDbContext.AspNetUserRoles, p => p.Id, pc => pc.AspNetRoleId, (p, pc) => new { p, pc })
+                Customer = erpDbContext.CustomerMasters.Where(c => c.CustomerId == x.CustomerId).ToList(),
+                Compny = erpDbContext.Companies.Where(c => c.Id == x.CompanyId).ToList(),
+                AspNetRoles = erpDbContext.AspNetRoles
+                            .Join(erpDbContext.AspNetUserRoles, p => p.Id, pc => pc.AspNetRoleId, (p, pc) => new { p, pc })
                             .Where(k => k.pc.AspNetUserId == x.UserId).Select(m => m.p).ToList<AspNetRole>(),
             }).ToListAsync();
 
@@ -52,15 +58,23 @@ namespace ERPAPI_APP.DataBaseAccess
             // Sets up the signing credentials using the above security key and specifying the HMAC SHA256 algorithm.
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            user.UserConfigs.ToList().ForEach(x =>
+            {
+                x.User = null;
+            });
             // Defines a set of claims to be included in the token.
             var claims = new List<Claim>
             {
                 // Custom claim using the user's ID.
                 new Claim("Myapp_User_Id",user.UserId.ToString()),
                 // Standard claim for user identifier, using username.
-                new Claim(ClaimTypes.NameIdentifier, user.EmailId),
+                new Claim("NameIdentifier", user.EmailId),
                 // Standard claim for user's email.
-                new Claim(ClaimTypes.Email, user.EmailId),
+                new Claim("User_Email", user.EmailId),
+                // Add Customer Id
+                new Claim("Customer_Id",user.CustomerId.ToString()),
+                //Add config Values
+                new Claim("configDetail",JsonSerializer.Serialize(user.UserConfigs)),
                 // Standard JWT claim for subject, using user ID.
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString())
             };
@@ -88,28 +102,38 @@ namespace ERPAPI_APP.DataBaseAccess
             try
             {
 
-                var dbUser = UtilObject.erpDbContext.AspNetUsers.Where(x => x.EmailId == userEmailId).SingleOrDefault();
+                using (var scope = new TransactionScope(
+                        TransactionScopeOption.Required,
+                        new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted }))
+                {
+                    using (var context = new ErpDbContext())
+                    {
+                        var dbUser = context.AspNetUsers.Where(x => x.EmailId == userEmailId).SingleOrDefault();
+                        if (dbUser == null)
+                        {
+                            return "Usesr not found..";
+                        }
+                        else
+                        {
+                            var userpassword = GetHashString(password);
+                            dbUser.UserConfigs = context.UserConfigs.Where(x => x.UserId == dbUser.UserId).ToList();
+                            if (dbUser.PasswordHas.ToUpper() == "NEWPASSWORD" && dbUser.IsFirstTimeLogin)
+                            {
+                                return "Create new password.";
+                            }
+                            else if (dbUser.PasswordHas == userpassword.Result.ToString())
+                            {
+                                return await IssueToken(dbUser);
+                            }
+                            else
+                            {
+                                return "Password not match.";
+                            }
+                        }
+                    }
+                    scope.Complete();
+                }
 
-                var userpassword = GetHashString(password);
-                if (dbUser == null)
-                {
-                    return "Usesr not found..";
-                }
-                else
-                {
-                    if(dbUser.PasswordHas.ToUpper() == "NEWPASSWORD" && dbUser.IsFirstTimeLogin)
-                    {
-                        return "Create new password.";
-                    }
-                    else if (dbUser.PasswordHas == userpassword.Result.ToString())
-                    {
-                        return await IssueToken(dbUser);
-                    }
-                    else
-                    {
-                        return "Password not match.";
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -121,10 +145,10 @@ namespace ERPAPI_APP.DataBaseAccess
         {
             try
             {
-              
+
                 var newCustomer = await DBACustomer.CreateNewCustomer(singup);
 
-                var newContact= await DAContact.CreateContact(singup, newCustomer.CustomerId);
+                var newContact = await DAContact.CreateContact(singup, newCustomer.CustomerId);
                 var newUser = new AspNetUser
                 {
                     EmailId = singup.emailId,
@@ -136,8 +160,8 @@ namespace ERPAPI_APP.DataBaseAccess
                     IsFirstTimeLogin = false,
                     CustomerId = newCustomer.CustomerId,
                 };
-                await UtilObject.erpDbContext.AspNetUsers.AddAsync(newUser);
-                await UtilObject.erpDbContext.SaveChangesAsync();
+                await erpDbContext.AspNetUsers.AddAsync(newUser);
+                await erpDbContext.SaveChangesAsync();
 
                 var newUserRol = new AspNetUserRole
                 {
@@ -145,16 +169,16 @@ namespace ERPAPI_APP.DataBaseAccess
                     AspNetRoleId = 1,
                 };
 
-                await UtilObject.erpDbContext.AspNetUserRoles.AddAsync(newUserRol);
-                await UtilObject.erpDbContext.SaveChangesAsync();
-                var retValue =await UtilObject.erpDbContext.AspNetUsers.Where(x=> x.UserId == newUser.UserId).Select(x => new AspNetUserList
+                await erpDbContext.AspNetUserRoles.AddAsync(newUserRol);
+                await erpDbContext.SaveChangesAsync();
+                var retValue = await erpDbContext.AspNetUsers.Where(x => x.UserId == newUser.UserId).Select(x => new AspNetUserList
                 {
                     UserId = x.UserId,
                     EmailId = x.EmailId,
-                    Customer = UtilObject.erpDbContext.CustomerMasters.Where(c => c.CustomerId == x.CustomerId).ToList(),
-                    Compny = UtilObject.erpDbContext.Companies.Where(c => c.Id == x.CompanyId).ToList(),
-                    AspNetRoles = UtilObject.erpDbContext.AspNetRoles
-                            .Join(UtilObject.erpDbContext.AspNetUserRoles, p => p.Id, pc => pc.AspNetRoleId, (p, pc) => new { p, pc })
+                    Customer = erpDbContext.CustomerMasters.Where(c => c.CustomerId == x.CustomerId).ToList(),
+                    Compny = erpDbContext.Companies.Where(c => c.Id == x.CompanyId).ToList(),
+                    AspNetRoles = erpDbContext.AspNetRoles
+                            .Join(erpDbContext.AspNetUserRoles, p => p.Id, pc => pc.AspNetRoleId, (p, pc) => new { p, pc })
                             .Where(k => k.pc.AspNetUserId == x.UserId).Select(m => m.p).ToList<AspNetRole>(),
                 }).SingleOrDefaultAsync();
 
@@ -170,15 +194,15 @@ namespace ERPAPI_APP.DataBaseAccess
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(userEmailId))
+                if (string.IsNullOrWhiteSpace(userEmailId))
                 {
                     return "Please enter emailId.";
                 }
-                if(string.IsNullOrWhiteSpace(password))
+                if (string.IsNullOrWhiteSpace(password))
                 {
                     return "Please enter password.";
                 }
-                var dbUser = UtilObject.erpDbContext.AspNetUsers.Where(x => x.EmailId == userEmailId).SingleOrDefault();
+                var dbUser = erpDbContext.AspNetUsers.Where(x => x.EmailId == userEmailId).SingleOrDefault();
                 if (dbUser == null)
                 {
                     return "User not found.";
@@ -187,8 +211,8 @@ namespace ERPAPI_APP.DataBaseAccess
                 {
                     var hasPassword = await GetHashString(password);
                     dbUser.PasswordHas = hasPassword;
-                    UtilObject.erpDbContext.AspNetUsers.Update(dbUser);
-                    UtilObject.erpDbContext.SaveChanges();
+                    erpDbContext.AspNetUsers.Update(dbUser);
+                    erpDbContext.SaveChanges();
                     return "Password changed.";
                 }
             }
@@ -203,8 +227,8 @@ namespace ERPAPI_APP.DataBaseAccess
         {
             try
             {
-                var userEmailId = await UtilObject.erpDbContext.AspNetUsers.Where(x => x.EmailId == emailId).SingleOrDefaultAsync();
-                if(userEmailId == null)
+                var userEmailId = await erpDbContext.AspNetUsers.Where(x => x.EmailId == emailId).SingleOrDefaultAsync();
+                if (userEmailId == null)
                 {
                     return false;
                 }
@@ -216,6 +240,52 @@ namespace ERPAPI_APP.DataBaseAccess
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        internal static async Task<List<objcustomerDetails>> GetCustomerDetails(int customerId)
+        {
+            List<objcustomerDetails> objcustomerDetails = new List<objcustomerDetails>();
+            try
+            {
+                using (var scope = new TransactionScope(
+                       TransactionScopeOption.Required,
+                       new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted }))
+                {
+                    using (var context = new ErpDbContext())
+                    {
+                        var addoj = new objcustomerDetails();
+                        var objItem = context.CustomerMasters.Where(x => x.CustomerId == customerId).FirstOrDefault();
+                        if (objItem != null)
+                        {
+                            addoj.customerId = objItem.CustomerId;
+                            addoj.CustomerMaster = objItem;
+                            addoj.shipAddresses = context.CustomerLocationInformations.Where(x => x.CustomerId == customerId).ToList();
+                            addoj.customerLocationInformation = context.CustomerLocationInformations.Where(x => x.CustomerId == customerId).FirstOrDefault();
+                            var cont = context.ContactMasters.Where(x => x.CustomerId == customerId).FirstOrDefault();
+                            if (cont != null)
+                            {
+                                addoj.ContactDetails = cont;
+                            }
+                            addoj.systemShipVia = context.SystemShipVia.ToList();
+                            var payterm = context.PaymentTerms.ToList();
+                            addoj.PaymentTerm = payterm;
+                            var objpaymentMethod = context.PaymentMethods.ToList();
+                            addoj.PaymentMethod = objpaymentMethod;
+                            addoj.shipingLocation = context.PrimaryShippingLocations.Where(x => x.CustomerId == customerId).ToList();
+                            objcustomerDetails.Add(addoj);
+                        }
+                    }
+                    scope.Complete();
+                }
+
+                return objcustomerDetails;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

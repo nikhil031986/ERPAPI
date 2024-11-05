@@ -29,6 +29,8 @@ public partial class ErpDbContext : DbContext
 
     public virtual DbSet<Carrier> Carriers { get; set; }
 
+    public virtual DbSet<CartItem> CartItems { get; set; }
+
     public virtual DbSet<CategoryMaster> CategoryMasters { get; set; }
 
     public virtual DbSet<Company> Companies { get; set; }
@@ -59,6 +61,16 @@ public partial class ErpDbContext : DbContext
 
     public virtual DbSet<MigrationConfig> MigrationConfigs { get; set; }
 
+    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+
+    public virtual DbSet<OrderMaster> OrderMasters { get; set; }
+
+    public virtual DbSet<OrderPayment> OrderPayments { get; set; }
+
+    public virtual DbSet<OrderPaymentDetail> OrderPaymentDetails { get; set; }
+
+    public virtual DbSet<OrderShipment> OrderShipments { get; set; }
+
     public virtual DbSet<OrderSourceMaster> OrderSourceMasters { get; set; }
 
     public virtual DbSet<OriginCountry> OriginCountries { get; set; }
@@ -67,6 +79,8 @@ public partial class ErpDbContext : DbContext
 
     public virtual DbSet<PaymentTerm> PaymentTerms { get; set; }
 
+    public virtual DbSet<PrimaryShippingLocation> PrimaryShippingLocations { get; set; }
+
     public virtual DbSet<RegionMaster> RegionMasters { get; set; }
 
     public virtual DbSet<SalesTaxis> SalesTaxes { get; set; }
@@ -74,6 +88,8 @@ public partial class ErpDbContext : DbContext
     public virtual DbSet<SystemShipVium> SystemShipVia { get; set; }
 
     public virtual DbSet<UnitMaster> UnitMasters { get; set; }
+
+    public virtual DbSet<UserConfig> UserConfigs { get; set; }
 
     public virtual DbSet<WarehouseMaster> WarehouseMasters { get; set; }
 
@@ -94,7 +110,7 @@ public partial class ErpDbContext : DbContext
     {
         modelBuilder.Entity<AddOn>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AddOn__3214EC07D596E548");
+            entity.HasKey(e => e.Id).HasName("PK__AddOn__3214EC07A481D20F");
 
             entity.ToTable("AddOn");
 
@@ -112,7 +128,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<AddOnDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AddOnDet__3214EC07292DA7CE");
+            entity.HasKey(e => e.Id).HasName("PK__AddOnDet__3214EC074D1EED35");
 
             entity.ToTable("AddOnDetail");
 
@@ -131,7 +147,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<AspNetRole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AspNetRo__3214EC07BF521179");
+            entity.HasKey(e => e.Id).HasName("PK__AspNetRo__3214EC0732156398");
 
             entity.Property(e => e.CreateAt)
                 .HasDefaultValueSql("(getdate())")
@@ -148,7 +164,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<AspNetUser>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__AspNetUs__206D91704D8343D9");
+            entity.HasKey(e => e.UserId).HasName("PK__AspNetUs__206D917078D82985");
 
             entity.Property(e => e.UserId).HasColumnName("User_Id");
             entity.Property(e => e.CompanyId).HasColumnName("Company_Id");
@@ -170,7 +186,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<AspNetUserRole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AspNetUs__3214EC07AC65928B");
+            entity.HasKey(e => e.Id).HasName("PK__AspNetUs__3214EC07FFB3E9BA");
 
             entity.Property(e => e.AspNetRoleId).HasColumnName("AspNetRole_Id");
             entity.Property(e => e.AspNetUserId).HasColumnName("AspNetUser_Id");
@@ -178,7 +194,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<BillingOption>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__BillingO__3214EC07019747DC");
+            entity.HasKey(e => e.Id).HasName("PK__BillingO__3214EC076939F04A");
 
             entity.ToTable("BillingOption");
 
@@ -200,7 +216,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<Carrier>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Carrier__3214EC07339421B0");
+            entity.HasKey(e => e.Id).HasName("PK__Carrier__3214EC07BC78DA21");
 
             entity.ToTable("Carrier");
 
@@ -223,6 +239,29 @@ public partial class ErpDbContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__cartItem__3214EC07B313E4F6");
+
+            entity.ToTable("cartItem");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.ItemCode)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("Item_Code");
+            entity.Property(e => e.Quantity).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.RefKey)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasDefaultValueSql("(char((10)))")
+                .HasColumnName("Ref_Key");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<CategoryMaster>(entity =>
         {
             entity.HasKey(e => e.CategoryId);
@@ -238,7 +277,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Company__3214EC0733503B76");
+            entity.HasKey(e => e.Id).HasName("PK__Company__3214EC070595E8AE");
 
             entity.ToTable("Company");
 
@@ -266,7 +305,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<ContactMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Contact___3214EC07159D4A53");
+            entity.HasKey(e => e.Id).HasName("PK__Contact___3214EC07D5E73C41");
 
             entity.ToTable("Contact_Master");
 
@@ -305,7 +344,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<CustomerGroup>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC074D91CE20");
+            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC07AFF5BAA1");
 
             entity.ToTable("CustomerGroup");
 
@@ -522,7 +561,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<EasyPostMethod>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__EasyPost__3214EC07D354A6CC");
+            entity.HasKey(e => e.Id).HasName("PK__EasyPost__3214EC078749AB48");
 
             entity.ToTable("EasyPostMethod");
 
@@ -534,7 +573,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<ItemCategory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Item_Cat__3214EC07C431EB3D");
+            entity.HasKey(e => e.Id).HasName("PK__Item_Cat__3214EC07E96053D6");
 
             entity.ToTable("Item_Category");
 
@@ -574,7 +613,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<ItemImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Item_Ima__3214EC075F90B80B");
+            entity.HasKey(e => e.Id).HasName("PK__Item_Ima__3214EC076631A68E");
 
             entity.ToTable("Item_Image");
 
@@ -708,7 +747,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<LogoMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Logo_Mas__3214EC078F4EE508");
+            entity.HasKey(e => e.Id).HasName("PK__Logo_Mas__3214EC07FF891FA6");
 
             entity.ToTable("Logo_Master");
 
@@ -739,7 +778,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<MigrationConfig>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Migratio__3214EC07A21C6BC3");
+            entity.HasKey(e => e.Id).HasName("PK__Migratio__3214EC078454684C");
 
             entity.ToTable("MigrationConfig");
 
@@ -775,9 +814,164 @@ public partial class ErpDbContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<OrderDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Order_De__3214EC07EA0A4B98");
+
+            entity.ToTable("Order_Details");
+
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.ItemCode)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("Item_Code");
+            entity.Property(e => e.ItemPrice)
+                .HasColumnType("numeric(18, 2)")
+                .HasColumnName("Item_Price");
+            entity.Property(e => e.OrderId).HasColumnName("Order_Id");
+            entity.Property(e => e.Qty).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Order_Det__Order__56B3DD81");
+        });
+
+        modelBuilder.Entity<OrderMaster>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Order_Ma__3214EC07FEFF1280");
+
+            entity.ToTable("Order_Master");
+
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
+            entity.Property(e => e.DiscountAmount)
+                .HasColumnType("numeric(18, 2)")
+                .HasColumnName("Discount_Amount");
+            entity.Property(e => e.OrderDate)
+                .HasColumnType("datetime")
+                .HasColumnName("Order_Date");
+            entity.Property(e => e.OrderId)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("Order_Id");
+            entity.Property(e => e.PaymentMethodId).HasColumnName("Payment_Method_Id");
+            entity.Property(e => e.PaymentTermId).HasColumnName("Payment_Term_Id");
+            entity.Property(e => e.TotalAmout)
+                .HasColumnType("numeric(18, 2)")
+                .HasColumnName("Total_Amout");
+        });
+
+        modelBuilder.Entity<OrderPayment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Order_Pa__3214EC0732EB2540");
+
+            entity.ToTable("Order_Payment");
+
+            entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.OrderId).HasColumnName("Order_Id");
+            entity.Property(e => e.PaymentTerm).HasColumnName("Payment_Term");
+            entity.Property(e => e.PaymentType).HasColumnName("Payment_Type");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderPayments)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Order_Pay__Order__5C6CB6D7");
+        });
+
+        modelBuilder.Entity<OrderPaymentDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__OrderPay__3214EC07E37F9B27");
+
+            entity.ToTable("OrderPaymentDetail");
+
+            entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.CardNumber)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("cardNumber");
+            entity.Property(e => e.ClientIp)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("client_ip");
+            entity.Property(e => e.CreateAt)
+                .HasColumnType("datetime")
+                .HasColumnName("CreateAT");
+            entity.Property(e => e.CvcCheck)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("cvc_check");
+            entity.Property(e => e.EmailId)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("emailId");
+            entity.Property(e => e.ExpMonth)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("exp_month");
+            entity.Property(e => e.ExpYear)
+                .HasMaxLength(15)
+                .IsUnicode(false)
+                .HasColumnName("exp_year");
+            entity.Property(e => e.Funding)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("funding");
+            entity.Property(e => e.Last4)
+                .HasMaxLength(15)
+                .IsUnicode(false)
+                .HasColumnName("last4");
+            entity.Property(e => e.PaymentThrow)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.TokenValue).HasColumnName("tokenValue");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderPaymentDetails)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__OrderPaym__Order__67DE6983");
+        });
+
+        modelBuilder.Entity<OrderShipment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Order_Sh__3214EC0719848891");
+
+            entity.ToTable("Order_Shipment");
+
+            entity.Property(e => e.Address1)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Address2)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Contry)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.OrderId).HasColumnName("Order_Id");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.State)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderShipments)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Order_Shi__Order__59904A2C");
+        });
+
         modelBuilder.Entity<OrderSourceMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__OrderSou__3214EC070ECB7079");
+            entity.HasKey(e => e.Id).HasName("PK__OrderSou__3214EC0752F05B8A");
 
             entity.ToTable("OrderSource_Master");
 
@@ -794,7 +988,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<OriginCountry>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__OriginCo__3214EC07D40CD0CA");
+            entity.HasKey(e => e.Id).HasName("PK__OriginCo__3214EC073826E6B1");
 
             entity.ToTable("OriginCountry");
 
@@ -823,7 +1017,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<PaymentMethod>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Payment___3214EC07B700AEE9");
+            entity.HasKey(e => e.Id).HasName("PK__Payment___3214EC07334D71AF");
 
             entity.ToTable("Payment_method");
 
@@ -851,7 +1045,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<PaymentTerm>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Payment___3214EC07998755DE");
+            entity.HasKey(e => e.Id).HasName("PK__Payment___3214EC0725FA07E2");
 
             entity.ToTable("Payment_terms");
 
@@ -874,9 +1068,55 @@ public partial class ErpDbContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<PrimaryShippingLocation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__PrimaryS__3214EC072E10B0B6");
+
+            entity.ToTable("PrimaryShippingLocation");
+
+            entity.Property(e => e.Address1)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Address2)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Address3)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.City)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
+            entity.Property(e => e.Location)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Phone)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Region)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ShipViaAccount)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ShipingLocation)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Slug)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.State)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<RegionMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Region_M__3214EC079074115F");
+            entity.HasKey(e => e.Id).HasName("PK__Region_M__3214EC076AD80984");
 
             entity.ToTable("Region_Master");
 
@@ -901,7 +1141,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<SalesTaxis>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Sales_Ta__3214EC072B77D5EB");
+            entity.HasKey(e => e.Id).HasName("PK__Sales_Ta__3214EC07AF57D0E2");
 
             entity.ToTable("Sales_Taxes");
 
@@ -942,7 +1182,7 @@ public partial class ErpDbContext : DbContext
 
         modelBuilder.Entity<SystemShipVium>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SystemSh__3214EC07DE447409");
+            entity.HasKey(e => e.Id).HasName("PK__SystemSh__3214EC078B0E924B");
 
             entity.Property(e => e.BillingOptions)
                 .HasMaxLength(100)
@@ -1017,6 +1257,32 @@ public partial class ErpDbContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.Visible).HasDefaultValue(true);
             entity.Property(e => e.Width).HasColumnType("numeric(18, 2)");
+        });
+
+        modelBuilder.Entity<UserConfig>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__UserConf__3214EC07FB3836AD");
+
+            entity.ToTable("UserConfig");
+
+            entity.Property(e => e.ConfigName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Config_Name");
+            entity.Property(e => e.ConfigValue)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Config_Value");
+            entity.Property(e => e.CreatAt).HasColumnType("datetime");
+            entity.Property(e => e.ValueType)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("Value_Type");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserConfigs)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__UserConfi__UserI__6ABAD62E");
         });
 
         modelBuilder.Entity<WarehouseMaster>(entity =>

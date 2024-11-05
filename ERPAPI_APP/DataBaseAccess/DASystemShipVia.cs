@@ -5,8 +5,10 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal static class DASystemShipVia
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task<List<GetSystemShipVium>> GetSystemShipVias()
-            => await UtilObject.erpDbContext.SystemShipVia.Select(x => new GetSystemShipVium
+            => await erpDbContext.SystemShipVia.Select(x => new GetSystemShipVium
             {
                 Id = x.Id,
                 Slug = x.Slug,
@@ -18,12 +20,12 @@ namespace ERPAPI_APP.DataBaseAccess
                 CreditCardPreAuthOption = x.CreditCardPreAuthOption,
                 FreeShip = x.FreeShip,
                 Web = x.Web,
-                EasyPostMethods = UtilObject.erpDbContext.EasyPostMethods.Where(m => m.Id == x.EasyPostMethodId).ToList(),
+                EasyPostMethods = erpDbContext.EasyPostMethods.Where(m => m.Id == x.EasyPostMethodId).ToList(),
                 Expedite = x.Expedite,
                 FreeFreightAllowed = x.FreeFreightAllowed,
                 International = x.International,
                 Collect = x.Collect,
-                carrier = UtilObject.erpDbContext.Carriers.Where(m => m.Id == x.CarrierId).ToList(),
+                carrier = erpDbContext.Carriers.Where(m => m.Id == x.CarrierId).ToList(),
                 IsReturnMethod = x.IsReturnMethod,
                 BillingOptions = x.BillingOptions,
                 HandlingChargeAmount = x.HandlingChargeAmount,

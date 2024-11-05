@@ -115,6 +115,8 @@ namespace ERPAPI_APP.Controllers
                 }
 
                 var newUser = await DBAUser.singUpUser(singUp);
+                await UtilImage.putContact(singUp); 
+
                 if (newUser != null)
                 {
                     return new JsonResult(new { message = "User register." , data=JsonConvert.SerializeObject(newUser) })

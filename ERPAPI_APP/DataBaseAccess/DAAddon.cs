@@ -5,8 +5,9 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal static class DAAddon
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
         internal static async Task<List<GetAddOnData>> GetAddOnDetails()
-            => await UtilObject.erpDbContext.AddOns.Select(x => new GetAddOnData
+            => await erpDbContext.AddOns.Select(x => new GetAddOnData
             {
                 Id = x.Id,
                 Amount = x.Amount,

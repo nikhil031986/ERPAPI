@@ -5,7 +5,9 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal class DAWarehouse
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
+
         internal static async Task<List<WarehouseMaster>> GetWarehouses()
-            => await UtilObject.erpDbContext.WarehouseMasters.ToListAsync();
+            => await erpDbContext.WarehouseMasters.ToListAsync();
     }
 }

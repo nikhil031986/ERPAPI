@@ -1,11 +1,14 @@
-﻿namespace ERPAPI_APP.Models
+﻿using ERPAPI_APP.JSONDataMigration;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace ERPAPI_APP.Models
 {
     public partial class AspNetUserList
     {
         public int UserId { get; set; }
         public string EmailId { get; set; }
-        public List<CustomerMaster> Customer { get;set; }
-        public List<Company> Compny { get;set; }
+        public List<CustomerMaster> Customer { get; set; }
+        public List<Company> Compny { get; set; }
         public List<AspNetRole> AspNetRoles { get; set; }
     }
 
@@ -19,6 +22,266 @@
     {
         public string UserEmailId { get; set; }
         public string password { get; set; }
+    }
+    public partial class taxItemDetails
+    {
+        public string? product_tax_code { get; set; }
+        public decimal? unit_price { get; set; }
+        public decimal? quantity { get; set; }
+    }
+    public partial class TaxCalulation
+    {
+        public string? from_country { get; set; }
+        public string? from_zip { get; set; }
+        public string? from_state { get; set; }
+        public string? from_city { get; set; }
+        public string? to_country { get; set; }
+        public string? to_zip { get; set; }
+        public string? to_state { get; set; }
+        public string? to_city { get; set; }
+        public decimal? amount { get; set; }
+        public decimal? shipping { get; set; }
+        public List<taxItemDetails>? line_items { get; set; }
+    }
+    public partial class ItemByCategory
+    {
+        public int Item_Id { get; set; }
+        public string? Item_Name { get; set; }
+        public string? Item_Description { get; set; }
+        public string? webdescription { get; set; }
+        public decimal? Item_Price { get; set; }
+        public decimal? weight { get; set; }
+        public decimal? Ship_width { get; set; }
+        public decimal? ship_Height { get; set; }
+        public decimal? Ship_Length { get; set; }
+        public string? itemUnit { get; set; }
+        public string? displayunit { get; set; }
+        public string? countryoforgin { get; set; }
+        public List<CustomerMaster>? vendor { get; set; }
+        public List<ItemImage>? Item_Images { get; set; }
+        public List<ItemCategory>? Item_Category { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+    public partial class GetOrderDetail
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public string? imgPath { get; set; }
+
+        public string ItemCode { get; set; } = null!;
+
+        public string? itemDesc { get; set; }
+
+        public decimal ItemPrice { get; set; }
+
+        public string Unit { get; set; } = null!;
+
+        public decimal Qty { get; set; } = 0;
+    }
+
+    public partial class GetOrderMaster
+    {
+        public int Id { get; set; }
+
+        public string? OrderId { get; set; }
+
+        public int CustomerId { get; set; }
+
+        public CustomerMaster? customer { get; set; }
+
+        public DateTime? OrderDate { get; set; }
+
+        public int? PaymentMethodId { get; set; }
+
+        public PaymentMethod? pymethod { get; set; }
+
+        public int? PaymentTermId { get; set; }
+
+        public PaymentTerm? pyTerm { get; set; }
+
+        public decimal? TotalAmout { get; set; }
+
+        public decimal? DiscountAmount { get; set; }
+
+        public List<GetOrderDetail>? OrderDetails { get; set; } = new List<GetOrderDetail>();
+
+        public List<GetOrderPayment>? OrderPayments { get; set; } = new List<GetOrderPayment>();
+
+        public List<GetOrderShipment>? OrderShipments { get; set; } = new List<GetOrderShipment>();
+    }
+
+    public partial class GetOrderShipment
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public string? Address1 { get; set; }
+
+        public string? Address2 { get; set; }
+
+        public string? State { get; set; }
+
+        public string? Contry { get; set; }
+
+        public string? PhoneNumber { get; set; }
+
+        public string? Email { get; set; }
+
+    }
+
+    public partial class GetOrderPayment
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public int? PaymentType { get; set; }
+
+        public int? PaymentTerm { get; set; }
+
+        public decimal? Amount { get; set; }
+    }
+
+    public partial class OrderDetailEntry
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public string ItemCode { get; set; } = null!;
+
+        public decimal ItemPrice { get; set; }
+
+        public string Unit { get; set; } = null!;
+
+        public decimal Qty { get; set; } = 0;
+
+        public DateTime? CreateAt { get; set; }
+    }
+
+    public partial class OrderMasterEntry
+    {
+        public int Id { get; set; }
+
+        public string? OrderId { get; set; }
+
+        public int CustomerId { get; set; }
+
+        public DateTime? OrderDate { get; set; }
+
+        public int? PaymentMethodId { get; set; }
+
+        public int? PaymentTermId { get; set; }
+
+        public decimal? TotalAmout { get; set; }
+
+        public decimal? DiscountAmount { get; set; }
+
+        public List<OrderDetailEntry>? OrderDetails { get; set; } = new List<OrderDetailEntry>();
+
+        public List<OrderPaymentEntry>? OrderPayments { get; set; } = new List<OrderPaymentEntry>();
+
+        public List<OrderShipmentEntry>? OrderShipments { get; set; } = new List<OrderShipmentEntry>();
+    }
+
+    public partial class OrderShipmentEntry
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public string? Address1 { get; set; }
+
+        public string? Address2 { get; set; }
+
+        public string? State { get; set; }
+
+        public string? Contry { get; set; }
+
+        public string? PhoneNumber { get; set; }
+
+        public string? Email { get; set; }
+
+    }
+
+    public partial class paymentDetailsEntry
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public decimal? Amount { get; set; }
+
+        public string? PaymentThrow { get; set; }
+
+        public string? CardNumber { get; set; }
+
+        public string? CvcCheck { get; set; }
+
+        public string? ExpMonth { get; set; }
+
+        public string? ExpYear { get; set; }
+
+        public string? Funding { get; set; }
+
+        public string? Last4 { get; set; }
+
+        public string? EmailId { get; set; }
+
+        public string? ClientIp { get; set; }
+
+        public string? TokenValue { get; set; }
+
+    }
+
+    public partial class OrderPaymentEntry
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+
+        public int? PaymentType { get; set; }
+
+        public int? PaymentTerm { get; set; }
+
+        public decimal? Amount { get; set; }
+    }
+
+    public partial class objcustomerDetails
+    {
+        public int? customerId { get; set; }
+        public CustomerMaster? CustomerMaster { get; set; }
+        public ContactMaster? ContactDetails { get; set; }
+        public CustomerLocationInformation? customerLocationInformation { get; set; }
+        public List<PaymentTerm>? PaymentTerm { get; set; }
+        public List<PaymentMethod>? PaymentMethod { get; set; }
+        public List<SystemShipVium>? systemShipVia { get; set; }
+        public List<PrimaryShippingLocation>? shipingLocation { get; set; }
+        public List<CustomerLocationInformation> shipAddresses { get; set; }
+    }
+
+
+    public partial class GetCartDetail
+    {
+        public string? ItemCode { get; set; }
+        public string? imagePath { get; set; }
+        public string? Unit { get; set; }
+        public decimal Quntity { get; set; }
+        public decimal? ItemPrice { get; set; }
+        public string? Item_Description { get; set; }
+    }
+
+    public partial class MasterMenu
+    {
+        public int Id { get; set; }
+        public string Category { get; set; }
+        public int ParentCategory { get; set; }
+        public List<ItemCategory> ChildMenuItem { get; set; }
+        public int ChildCount { get; set; }
     }
     public partial class SingUp
     {
@@ -41,7 +304,7 @@
 
         public CustomerMaster Customer { get; set; }
 
-        public List<RegionMaster> region {  get; set; }   
+        public List<RegionMaster> region { get; set; }
 
         public DateTime? Dob { get; set; }
 

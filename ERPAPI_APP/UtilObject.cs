@@ -51,52 +51,53 @@ namespace ERPAPI_APP
                 var listOfAPI = await UtilObject.erpDbContext.MigrationConfigs.ToListAsync();
                 foreach (MigrationConfig config in listOfAPI)
                 {
-                    if (config.Id < 1017) continue;
 
-                    using (HttpClient client = new HttpClient())
-                    {
-                        DbLog log = new DbLog
-                        {
-                            LogDate = DateTime.Now,
-                            RequestApi = config.Apidetails,
-                            RequestDate = DateTime.Now,
-                        };
-                        HttpMethod httpMethod = new HttpMethod(config.Httpmethod);
-                        client.DefaultRequestHeaders.Add(config.TokanType, config.Apitokan);
-                        HttpRequestMessage request = new HttpRequestMessage(httpMethod, config.Apidetails);
-                        var content = new StringContent("{}", null, "application/json");
-                        request.Content = content;
-                        request.Headers.Add("accept", "application/json");
-                        HttpResponseMessage response = await client.SendAsync(request);
-                        response.EnsureSuccessStatusCode();
-                        string responseBody = await response.Content.ReadAsStringAsync();
 
-                        log.ResponseValue = responseBody;
-                        log.ResponseDate = DateTime.Now;
+                    //using (HttpClient client = new HttpClient())
+                    //{
+                    //    DbLog log = new DbLog
+                    //    {
+                    //        LogDate = DateTime.Now,
+                    //        RequestApi = config.Apidetails,
+                    //        RequestDate = DateTime.Now,
+                    //    };
+                    //    HttpMethod httpMethod = new HttpMethod(config.Httpmethod);
+                    //    client.DefaultRequestHeaders.Add(config.TokanType, config.Apitokan);
+                    //    HttpRequestMessage request = new HttpRequestMessage(httpMethod, config.Apidetails);
+                    //    var content = new StringContent("{}", null, "application/json");
+                    //    request.Content = content;
+                    //    request.Headers.Add("accept", "application/json");
+                    //    HttpResponseMessage response = await client.SendAsync(request);
+                    //    response.EnsureSuccessStatusCode();
+                    //    string responseBody = await response.Content.ReadAsStringAsync();
 
-                        await DALogDetails.InsertLog(log);
+                    //    log.ResponseValue = responseBody;
+                    //    log.ResponseDate = DateTime.Now;
 
-                        //dynamic obj = JsonConvert.DeserializeObject(responseBody);
-                        //foreach(var item in obj)
-                        //{
-                        //    Console.WriteLine(item);
-                        //}
-                        var methodName = Convert.ToString(config.MethodName);
-                        if (!string.IsNullOrWhiteSpace(methodName))
-                        {
-                            var className = "ERPAPI_APP.UtilObject";
-                            Type typ = Type.GetType(className, true);
-                            if (typ != null)
-                            {
-                                MethodInfo method = typ.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
-                                if (method != null)
-                                {
-                                    method.Invoke(null, new object[] { responseBody });
-                                }
-                            }
-                        }
+                    //    await DALogDetails.InsertLog(log);
 
-                    }
+                    //    var methodName = Convert.ToString(config.MethodName);
+                    //    if (!string.IsNullOrWhiteSpace(methodName))
+                    //    {
+                    //        var className = "ERPAPI_APP.UtilObject";
+                    //        Type typ = Type.GetType(className, true);
+                    //        if (typ != null)
+                    //        {
+                    //            MethodInfo method = typ.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
+                    //            if (method != null)
+                    //            {
+                    //                method.Invoke(null, new object[] { responseBody });
+                    //            }
+                    //        }
+                    //    }
+
+                    //}
+
+                }
+                var ItemsImages = erpDbContext.ItemMasters.Where(x => x.MainImageFileId != 0).ToList();
+                foreach (var item in ItemsImages)
+                {
+                    await UtilImage.GetImageLinkFromItem((int)item.MainImageFileId, item.ItemName);
                 }
                 return true;
             }
@@ -212,6 +213,7 @@ namespace ERPAPI_APP
                             dbitem.ItemName = newImportWebitem.Item;
                             dbitem.ItemDescription = newImportWebitem.Description;
                             dbitem.WebDescription = newImportWebitem.WebDescription;
+                            dbitem.CategoryId = string.IsNullOrWhiteSpace(Convert.ToString(newImportWebitem.CategoryIds)) ? 0 : (int)newImportWebitem.CategoryIds;
                             dbitem.Weight = await ConvertToDecimal(Convert.ToString(newImportWebitem.Weight));
                             dbitem.ShipWidth = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipWidth));
                             dbitem.ShipHeight = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipHeight));
@@ -234,6 +236,7 @@ namespace ERPAPI_APP
                                 ItemName = newImportWebitem.Item,
                                 ItemDescription = newImportWebitem.Description,
                                 WebDescription = newImportWebitem.WebDescription,
+                                CategoryId = string.IsNullOrWhiteSpace(Convert.ToString(newImportWebitem.CategoryIds)) ? 0 : (int)newImportWebitem.CategoryIds,
                                 Weight = await ConvertToDecimal(Convert.ToString(newImportWebitem.Weight)),
                                 ShipWidth = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipWidth)),
                                 ShipHeight = await ConvertToDecimal(Convert.ToString(newImportWebitem.ShipHeight)),

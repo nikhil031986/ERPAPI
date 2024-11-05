@@ -4,6 +4,16 @@ using System.Globalization;
 
 namespace ERPAPI_APP.JSONDataMigration
 {
+    public partial class jsImages
+    {
+        public string displayLink { get; set; }
+        public string downloadLink { get; set; }
+        public string contentType { get; set; }
+    }
+    public partial class jsImages
+    {
+        public static jsImages FromJson(string json) => JsonConvert.DeserializeObject<jsImages>(json, ERPAPI_APP.JSONDataMigration.Converter.Settings);
+    }
     public class BillingOption
     {
         public int id { get; set; }

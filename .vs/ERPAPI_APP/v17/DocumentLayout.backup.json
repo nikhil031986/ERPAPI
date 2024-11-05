@@ -1,0 +1,229 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\GITProject\\ERPAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\controllers\\aspnetusercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\controllers\\aspnetusercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\jsondatamigration\\itemmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\jsondatamigration\\itemmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\controllers\\itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\controllers\\itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\databaseaccess\\daorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\databaseaccess\\daorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\models\\erpdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\models\\erpdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\models\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\models\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\databaseaccess\\dacommondbfunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\databaseaccess\\dacommondbfunction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\databaseaccess\\dataxjar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\databaseaccess\\dataxjar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\databaseaccess\\daitems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\databaseaccess\\daitems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\databaseaccess\\dbauser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\databaseaccess\\dbauser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|d:\\gitproject\\erpapi\\erpapi_app\\models\\aspnetuserlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19770D3C-8556-4489-8385-8FDA0DD0499F}|ERPAPI_APP\\ERPAPI_APP.csproj|solutionrelative:erpapi_app\\models\\aspnetuserlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AspNetUserController.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\AspNetUserController.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Controllers\\AspNetUserController.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\AspNetUserController.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Controllers\\AspNetUserController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T06:01:30.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ItemModule.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\JSONDataMigration\\ItemModule.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\JSONDataMigration\\ItemModule.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\JSONDataMigration\\ItemModule.cs",
+              "RelativeToolTip": "ERPAPI_APP\\JSONDataMigration\\ItemModule.cs",
+              "ViewState": "AgIAAKcAAAAAAAAAAAA5wLkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:51:28.252Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CustomerController.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\CustomerController.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Controllers\\CustomerController.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\CustomerController.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Controllers\\CustomerController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAA7wCEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:50:36.397Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ItemController.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\ItemController.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Controllers\\ItemController.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\ItemController.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Controllers\\ItemController.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAowFUAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:49:47.975Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Models\\OrderDetail.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\OrderDetail.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Models\\OrderDetail.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAawBUAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:45:33.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DaOrder.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaOrder.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\DataBaseAccess\\DaOrder.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaOrder.cs",
+              "RelativeToolTip": "ERPAPI_APP\\DataBaseAccess\\DaOrder.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAtwHcAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:44:47.259Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "OrderController.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\OrderController.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Controllers\\OrderController.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Controllers\\OrderController.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Controllers\\OrderController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAwA4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:44:36.545Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DaTaxJar.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaTaxJar.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\DataBaseAccess\\DaTaxJar.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaTaxJar.cs",
+              "RelativeToolTip": "ERPAPI_APP\\DataBaseAccess\\DaTaxJar.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:41:32.266Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DaCommonDBFunction.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaCommonDBFunction.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\DataBaseAccess\\DaCommonDBFunction.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DaCommonDBFunction.cs",
+              "RelativeToolTip": "ERPAPI_APP\\DataBaseAccess\\DaCommonDBFunction.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAlwBMAAABuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:40:24.492Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "DAItems.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DAItems.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\DataBaseAccess\\DAItems.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DAItems.cs",
+              "RelativeToolTip": "ERPAPI_APP\\DataBaseAccess\\DAItems.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAwBkAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:39:03.861Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "DBAUser.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DBAUser.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\DataBaseAccess\\DBAUser.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\DataBaseAccess\\DBAUser.cs",
+              "RelativeToolTip": "ERPAPI_APP\\DataBaseAccess\\DBAUser.cs",
+              "ViewState": "AgIAAAgBAAAAAAAAAAAYwBIBAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:36:35.11Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AspNetUserList.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\AspNetUserList.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Models\\AspNetUserList.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\AspNetUserList.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Models\\AspNetUserList.cs",
+              "ViewState": "AgIAAMIAAAAAAAAAAAAAAMIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:32:34.75Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ErpDbContext.cs",
+              "DocumentMoniker": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\ErpDbContext.cs",
+              "RelativeDocumentMoniker": "ERPAPI_APP\\Models\\ErpDbContext.cs",
+              "ToolTip": "D:\\GITProject\\ERPAPI\\ERPAPI_APP\\Models\\ErpDbContext.cs",
+              "RelativeToolTip": "ERPAPI_APP\\Models\\ErpDbContext.cs",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAYwGoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T14:33:15.666Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

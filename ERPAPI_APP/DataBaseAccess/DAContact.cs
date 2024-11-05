@@ -7,9 +7,10 @@ namespace ERPAPI_APP.DataBaseAccess
 {
     internal class DAContact
     {
+        private static readonly ErpDbContext erpDbContext = new ErpDbContext();
         internal static async Task<List<ContactDetails>> Contacts()
-            => await UtilObject.erpDbContext.ContactMasters
-                .Join(UtilObject.erpDbContext.CustomerMasters, p => p.CustomerId, pc => pc.CustomerId, (p, pc) => new { p, pc })
+            => await erpDbContext.ContactMasters
+                .Join(erpDbContext.CustomerMasters, p => p.CustomerId, pc => pc.CustomerId, (p, pc) => new { p, pc })
                 .Select(m => new ContactDetails
                 {
                     contactMaster = m.p,
@@ -38,8 +39,8 @@ namespace ERPAPI_APP.DataBaseAccess
                     UpdatedAt = DateTime.Now,
                 };
                 
-                await UtilObject.erpDbContext.ContactMasters.AddAsync(NewContact);
-                await UtilObject.erpDbContext.SaveChangesAsync();
+                await erpDbContext.ContactMasters.AddAsync(NewContact);
+                await erpDbContext.SaveChangesAsync();
                 return NewContact;
             }
             catch (Exception ex)

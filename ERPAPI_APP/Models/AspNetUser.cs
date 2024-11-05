@@ -22,4 +22,6 @@ public partial class AspNetUser
     public bool IsFirstTimeLogin { get; set; }
 
     public bool IsActive { get; set; }
+
+    public virtual ICollection<UserConfig> UserConfigs { get; set; } = new List<UserConfig>();
 }

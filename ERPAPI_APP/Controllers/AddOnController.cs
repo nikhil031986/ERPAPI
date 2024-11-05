@@ -10,7 +10,7 @@ namespace ERPAPI_APP.Controllers
     {
         private readonly ILogger<AddOnController> _logger;
         private readonly IConfiguration _configuration;
-
+        
         public AddOnController(ILogger<AddOnController> logger, IConfiguration configuration)
         {
             _logger = logger;

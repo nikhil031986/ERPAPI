@@ -1,7 +1,5 @@
 ﻿using ERPAPI_APP.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
 namespace ERPAPI_APP.Controllers
 {
     [Route("api/[controller]")]
@@ -21,4 +19,12 @@ namespace ERPAPI_APP.Controllers
         public async Task<List<GetSystemShipVium>> System_Ship_Vias()
            => await DataBaseAccess.DASystemShipVia.GetSystemShipVias();
     }
+
+    //[HttpPut("ShippingPut")]
+    //public async Task<JsonResult>ShippingPut(string customertranId)
+    ////=> await UtilImage.putShipLocation(customertranId);
+    //{
+    //    return new JsonResult(new { });
+    //}
 }
+
